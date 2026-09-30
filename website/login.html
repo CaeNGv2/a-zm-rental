@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - AZoom Car Rental</title>
+  <link rel="stylesheet" href="assets/main.css" />
+  <script src="assets/api.js" defer></script>
+  <script src="assets/component.js" defer></script>
+</head>
+
+<body>
+  <html-component src="components/header.html"></html-component>
+
+  <main>
+    <h1>User Login</h1>
+
+    <!-- Current User ID Display -->
+    <section class="section-box">
+      <h2>Session Status</h2>
+      <p>Current User ID: <strong class="display-user-id">Guest (Not logged in)</strong></p>
+      <div>
+        <button type="button" class="action-logout" style="display: none;">Log Out</button>
+        <a href="index.html" style="margin-left: 8px;">Back to Home</a>
+      </div>
+    </section>
+
+    <!-- Sign In Form -->
+    <section class="section-box">
+      <h2>Sign In</h2>
+      <form id="login-form">
+        <div>
+          <label for="login-user-id">User ID:</label><br />
+          <input type="text" id="login-user-id" name="userId" placeholder="e.g. user_123" required />
+        </div>
+        <br />
+        <div>
+          <label for="login-password">Password (optional):</label><br />
+          <input type="password" id="login-password" name="password" placeholder="Any password" />
+        </div>
+        <br />
+        <button type="submit" id="login-btn">Log In</button>
+      </form>
+    </section>
+
+    <!-- Quick Test Accounts -->
+    <section class="section-box">
+      <h2>Quick Test Accounts</h2>
+      <p>Click any test account below to log in instantly:</p>
+      <button type="button" class="quick-login-btn" data-user-id="user_123">Login as Bob Jones (user_123)</button>
+      <button type="button" class="quick-login-btn" data-user-id="user_456" style="margin-left: 8px;">Login as Alice Smith (user_456)</button>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 AZoom Car Rental | <a href="index.html">Home</a></p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const loginForm = document.getElementById("login-form");
+      const loginInput = document.getElementById("login-user-id");
+
+      // Form submit: save session and redirect to home
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const userId = loginInput.value.trim();
+        if (!userId) return;
+
+        window.siteApi.login(userId);
+        window.location.href = "index.html";
+      });
+
+      // Quick test buttons: save session and redirect to home
+      document.querySelectorAll(".quick-login-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const userId = btn.getAttribute("data-user-id");
+          window.siteApi.login(userId);
+          window.location.href = "index.html";
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
