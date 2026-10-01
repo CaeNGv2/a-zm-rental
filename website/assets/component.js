@@ -1,9 +1,13 @@
+
+/**
+ * @type {HtmlComponent|null}
+ */
 let currentComponent = null;
 /**
  * Vue style component loaded hook
  * @param {Function} fn called after component is loaded
  */
-globalThis.onMounted = (fn) => {
+window.onMounted = (fn) => {
   if (currentComponent) {
     currentComponent.addEventListener("loaded", () => fn.call(currentComponent, currentComponent), { once: true });
   } else {
@@ -11,19 +15,66 @@ globalThis.onMounted = (fn) => {
   }
 };
 
+// A global execution stack to keep track of the current HTML base path context
+const componentStack = new (class ComponentStack {
+  #baseContextStack = [window.location.href];
+  
+  /**
+   * update the stack context for any nested children before injection
+   * @param {string} rawSrc 
+   */
+  push(rawSrc) {
+    const currentBaseContext = this.#baseContextStack.at(-1);
+
+    const resolvedUrl = new URL(rawSrc, currentBaseContext);
+    const targetUrl = resolvedUrl.href;
+
+    // We get the directory containing the HTML file we are about to fetch
+    const nestedBaseContext = new URL(".", targetUrl).href;
+    this.#baseContextStack.push(nestedBaseContext);
+
+    return { contextDir: nestedBaseContext, resolvedSrc: targetUrl };
+  }
+  pop() {
+    return this.#baseContextStack.pop();
+  }
+  peek() {
+    return this.#baseContextStack.at(-1);
+  }
+})();
+
 class HtmlComponent extends HTMLElement {
   async connectedCallback() {
-    await this.injectComponentBody();
-    await this.injectScripts();
+    const src = this.getSrcAttr();
+
+    // track level
+    const { resolvedSrc, contextDir } = componentStack.push(src);
+
+    await this.injectComponentBody(resolvedSrc);
+    await this.injectScripts(contextDir);
+
+    // untrack after inject
+    componentStack.pop();
 
     // trigger a finish load event so other logic can work on the injected component
     this.dispatchEvent(new CustomEvent("loaded", {
-      detail: { src: this.getAttribute("src") }
+      detail: { src }
     }));
   }
 
-  async injectComponentBody() {
-    const response = await fetch(this.getAttribute("src"));
+  getSrcAttr() {
+    const src = this.getAttribute("src");
+    if (!src) throw new Error("html-component must define src.");
+    return src;
+  }
+
+  /**
+   * 
+   * @param {string} src 
+   */
+  async injectComponentBody(src) {
+    console.log("fetch " + src); // dbg
+    const response = await fetch(src);
     let html = await response.text();
 
     for (const attr of this.attributes) {
@@ -40,9 +91,12 @@ class HtmlComponent extends HTMLElement {
 
   // because the component is lazily injected by innerHTML, browsers dont execute scripts within.
   // we need to extract the intended scripts, then execute.
-  // only register the block if <script type="module"></script> because type="module"
-  // wont be executed by browser (and IDE recognise "module" for js support)
-  async injectScripts() {
+  // only register the block if <script type="module"></script> (and IDE recognise "module" for js support)
+  /**
+   * 
+   * @param {string} contextDir the base path/url to resolve script src against
+   */
+  async injectScripts(contextDir) {
     const componentScripts = Array.from(this.querySelectorAll('script[type="module"]'));
 
     for (const existingScript of componentScripts) {
@@ -51,7 +105,7 @@ class HtmlComponent extends HTMLElement {
 
       if (srcAttr) {
         try {
-          const scriptUrl = new URL(srcAttr, window.location.href).href;
+          const scriptUrl = new URL(srcAttr, contextDir).href;
           const mod = await import(scriptUrl);
 
           // if (typeof mod.onMounted === "function") {
@@ -65,8 +119,8 @@ class HtmlComponent extends HTMLElement {
       } else {
         try {
           // execute the existingScript.textContent
-          const handler = new Function("component", existingScript.textContent);
-          handler(globalThis);
+          const handler = new Function(existingScript.textContent);
+          handler.call(window);
         } catch (err) {
           console.error("Error executing inline component script:", err);
         } finally {
@@ -75,8 +129,9 @@ class HtmlComponent extends HTMLElement {
       }
 
       // it's a dummy block, just label it to mark that is executed
-      existingScript.setAttribute("component", this.getAttribute("src"));
-      existingScript.setAttribute("loaded", true);
+      existingScript.setAttribute("type", "vm/module");
+      existingScript.setAttribute("component", this.getSrcAttr());
+      existingScript.toggleAttribute("loaded", true);
     }
   }
 }

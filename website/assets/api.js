@@ -2,12 +2,16 @@
 // Mock API simulating server responses and processing
 class ServerApi {
   constructor() {
-    this.initMockDb();
+    this.#initMockDb();
   }
 
+  /**
+   * 
+   * @param {string} userId 
+   * @returns {Promise<{status:number, data: UserProfile}>}
+   */
   async getUserProfile(userId) {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
+    await this.#mockDelay();
 
     const users = JSON.parse(localStorage.getItem('server.users')) || {};
     const profile = users[userId];
@@ -20,12 +24,12 @@ class ServerApi {
   }
 
   async getAllUsers() {
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await this.#mockDelay();
     return JSON.parse(localStorage.getItem('server.users')) || {};
   }
 
   async registerUser(userId, name, email) {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await this.#mockDelay();
     const users = JSON.parse(localStorage.getItem('server.users')) || {};
     if (users[userId]) {
       throw new Error("User ID already exists");
@@ -40,7 +44,7 @@ class ServerApi {
     return { status: 201, data: newUser };
   }
 
-  initMockDb() {
+  #initMockDb() {
     // Mock Server Database (using localStorage)
     if (!localStorage.getItem('server.users')) {
       const defaultUsers = {
@@ -50,14 +54,31 @@ class ServerApi {
       localStorage.setItem('server.users', JSON.stringify(defaultUsers));
     }
   }
+
+  /**
+   * simulate network delay 
+   * @param {number} max 
+   */
+  async #mockDelay(max = 100) {
+    return await new Promise(resolve => setTimeout(resolve, Math.random() * max));
+  }
 }
 
+
 class SiteApi {
+  /**
+   * @type {SiteApi}
+   */
   static instance = null;
+
+  /**
+   * @type {ServerApi}
+   */
+  server;
 
   constructor() {
     if (SiteApi.instance) {
-      return SiteApi.instance;
+      throw new Error("siteapi is singleton");
     }
 
     this.server = new ServerApi();
@@ -73,22 +94,31 @@ class SiteApi {
     return SiteApi.instance;
   }
 
-  login(userId) {
+  /**
+   * @param {string} userId 
+   */
+  #login(userId) {
     localStorage.setItem('site.session_user_id', userId);
-    window.dispatchEvent(new CustomEvent('authChanged', { detail: { userId } }));
+    console.log(`logged in as ${userId}`);
+    window.dispatchEvent(new CustomEvent('authChange', { detail: { userId } }));
   }
 
+  /**
+   * @param {string} userId 
+   */
   async authenticate(userId) {
     const response = await this.server.getUserProfile(userId);
     if (response && response.status === 200) {
-      this.login(userId);
+      this.#login(userId);
       return response.data;
     }
     throw new Error("User not found");
   }
 
   logout() {
+    console.log(`logout ${this.getCurrentUserId()}`);
     localStorage.removeItem('site.session_user_id');
+    window.dispatchEvent(new CustomEvent('authChange', { detail: { userId: null } }));
   }
 
   getCurrentUserId() {
@@ -108,5 +138,5 @@ class SiteApi {
   }
 }
 
-// export site api
+// export site api for use
 window.siteApi = new SiteApi();
