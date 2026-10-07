@@ -42,7 +42,8 @@ async function updateHeaderUser() {
   document.querySelectorAll(".display-user-id").forEach((el) => {
     el.textContent = user?.id ?? "Guest (Not logged in)";
   });
-  document.querySelectorAll(".action-logout").forEach((btn) => {
+  document.querySelectorAll(".action-logout").forEach((el) => {
+    const btn = /** @type {HTMLButtonElement} */ (el);
     btn.style.display = user ? "inline" : "none";
     btn.onclick = () => {
       window.siteApi.logout();

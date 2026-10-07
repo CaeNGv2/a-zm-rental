@@ -33,9 +33,12 @@ const componentStack = new (class ComponentStack {
     const nestedBaseContext = new URL(".", targetUrl).href;
     this.#baseContextStack.push(nestedBaseContext);
 
+    console.log(rawSrc, this.#baseContextStack); // tmp dbg
+
     return { contextDir: nestedBaseContext, resolvedSrc: targetUrl };
   }
   pop() {
+    console.log("pop: ", this.peek()); // tmp dbg
     return this.#baseContextStack.pop();
   }
   peek() {
@@ -52,6 +55,9 @@ class HtmlComponent extends HTMLElement {
 
     await this.injectComponentBody(resolvedSrc);
     await this.injectScripts(contextDir);
+
+    // wait for the next paint cycle to complete (innerhtml to effect)
+    await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve)));
 
     // untrack after inject
     componentStack.pop();

@@ -13,7 +13,7 @@ class ServerApi {
   async getUserProfile(userId) {
     await this.#mockDelay();
 
-    const users = JSON.parse(localStorage.getItem('server.users')) || {};
+    const users = JSON.parse(localStorage.getItem('server.users') || "") || {};
     const profile = users[userId];
 
     if (!profile) {
@@ -25,12 +25,19 @@ class ServerApi {
 
   async getAllUsers() {
     await this.#mockDelay();
-    return JSON.parse(localStorage.getItem('server.users')) || {};
+    return JSON.parse(localStorage.getItem('server.users') || "") || {};
   }
 
+  /**
+   * 
+   * @param {string} userId 
+   * @param {string} name 
+   * @param {string} email 
+   * @returns 
+   */
   async registerUser(userId, name, email) {
     await this.#mockDelay();
-    const users = JSON.parse(localStorage.getItem('server.users')) || {};
+    const users = JSON.parse(localStorage.getItem('server.users') || "") || {};
     if (users[userId]) {
       throw new Error("User ID already exists");
     }
@@ -69,7 +76,7 @@ class SiteApi {
   /**
    * @type {SiteApi}
    */
-  static instance = null;
+  static instance;
 
   /**
    * @type {ServerApi}
