@@ -15,52 +15,34 @@ window.onMounted = (fn) => {
   }
 };
 
-// A global execution stack to keep track of the current HTML base path context
-const componentStack = new (class ComponentStack {
-  #baseContextStack = [window.location.href];
-  
-  /**
-   * update the stack context for any nested children before injection
-   * @param {string} rawSrc 
-   */
-  push(rawSrc) {
-    const currentBaseContext = this.#baseContextStack.at(-1);
-
-    const resolvedUrl = new URL(rawSrc, currentBaseContext);
-    const targetUrl = resolvedUrl.href;
-
-    // We get the directory containing the HTML file we are about to fetch
-    const nestedBaseContext = new URL(".", targetUrl).href;
-    this.#baseContextStack.push(nestedBaseContext);
-
-    console.log(rawSrc, this.#baseContextStack); // tmp dbg
-
-    return { contextDir: nestedBaseContext, resolvedSrc: targetUrl };
-  }
-  pop() {
-    console.log("pop: ", this.peek()); // tmp dbg
-    return this.#baseContextStack.pop();
-  }
-  peek() {
-    return this.#baseContextStack.at(-1);
-  }
-})();
-
 class HtmlComponent extends HTMLElement {
   async connectedCallback() {
     const src = this.getSrcAttr();
 
-    // track level
-    const { resolvedSrc, contextDir } = componentStack.push(src);
+    const parentContext = (() => {
+      let contextSrc = window.location.href;
+      /** @type {HtmlComponent|null|undefined} */
+      const parent = this.parentElement?.closest(HtmlComponent.htmlTagName);
+      if (parent) {
+        const parentContext = parent.getAttribute("context");
+        if (parentContext) {
+          contextSrc = (new URL(parentContext, window.location.href)).href;
+        } else {
+          console.error("missing src on parent html-component");
+        }
+      }
+      return (new URL(".", contextSrc)).href; 
+    })();
 
+    const resolvedSrc = (new URL(src, parentContext)).href;
+
+    console.log(`resolved context for html-component ${src}: ${parentContext}`); // dbg
+
+    const newContextUrl = new URL(".", resolvedSrc);
+
+    this.setAttribute("context", newContextUrl.pathname);
     await this.injectComponentBody(resolvedSrc);
-    await this.injectScripts(contextDir);
-
-    // wait for the next paint cycle to complete (innerhtml to effect)
-    await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve)));
-
-    // untrack after inject
-    componentStack.pop();
+    await this.injectScripts(newContextUrl.href);
 
     // trigger a finish load event so other logic can work on the injected component
     this.dispatchEvent(new CustomEvent("loaded", {
@@ -86,13 +68,41 @@ class HtmlComponent extends HTMLElement {
     for (const attr of this.attributes) {
       if (attr.name === "src") continue;
 
-      html = html.replaceAll(
-        `{{${attr.name}}}`,
-        attr.value
-      );
+      // prop-attr-liek-this
+      const kebabName = attr.name.toLowerCase();
+      // propAttrLiekThis
+      const camelName = kebabName.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+
+      html = html
+        .replaceAll(
+          `{{${kebabName}}}`,
+          attr.value
+        )
+        .replaceAll(
+          `{{${camelName}}}`,
+          attr.value
+        );
+        //console.log("camel name : ", camelName); // dbg
     }
 
+    // save existing custom child nodes to append back later
+    const customChildren = Array.from(this.childNodes);
+
+    // the main injection
     this.innerHTML = html;
+
+    // restore custom child nodes
+    const slotElement = this.querySelector('slot');
+    if (slotElement) {
+      // rplc placeholder <slot>
+      slotElement.replaceWith(...customChildren);
+      console.log(`component - injected children to slot`); // dbg
+    } else if (customChildren.length > 0) {
+      // fallback: no slot found - append to end
+      this.append(...customChildren);
+      
+      console.log(`component - appended children to end`); // dbg
+    }
   }
 
   // because the component is lazily injected by innerHTML, browsers dont execute scripts within.
@@ -140,6 +150,10 @@ class HtmlComponent extends HTMLElement {
       existingScript.toggleAttribute("loaded", true);
     }
   }
+
+  static get htmlTagName() {
+    return "html-component";
+  }
 }
 
-customElements.define("html-component", HtmlComponent);
+customElements.define(HtmlComponent.htmlTagName, HtmlComponent);

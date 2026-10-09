@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Styled HTML5 Page with Media</title>
+  <link rel="stylesheet" href="assets/main.css" />
+  <script src="assets/main.js" type="module" defer></script> <!-- load main.js as ESM for imports -->
+  <!-- <script src="assets/api.js" defer></script>
+  <script src="assets/component.js" defer></script> -->
+</head>
+
+<body>
+
+  <!-- Header and Navigation -->
+  <html-component src="components/header.html"></html-component>
+
+  <!-- Main Content -->
+  <main>
+    <!-- User Session & User ID Display -->
+    <section class="section-box display-user-status">
+      <h2>User Session</h2>
+      <p>Current User ID: <strong class="display-user-id">Guest (Not logged in)</strong><span class="display-user-name"></span></p>
+      <div>
+        <a href="login.html">Login / Switch User</a>
+        <button type="button" class="action-logout" style="display: none; margin-left: 8px;">Logout</button>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <h2>About HTML</h2>
+      <p><strong>HTML</strong> is the foundation of web development.
+        It allows us to structure text, images, media, and forms.</p>
+    </section>
+
+    <!-- Media Section -->
+    <section class="section-box">
+      <h2>Media Showcase</h2>
+      <img
+        src="https://hips.hearstapps.com/hmg-prod/images/c33b2259-8c6b-4308-bc6f-5373d8a6600d.jpeg?crop=0.668xw:1.00xh;0.194xw,0&resize=640:*"
+        alt="Sample Image" width="300px" class="responsive-img">
+      <p>This is a sample image embedded in the page.</p>
+
+      <div class="video-container">
+        <video controls>
+          <source src="sample.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <p>Above is a sample video embedded using the HTML5 <code>&lt;video&gt;</code> tag.</p>
+    </section>
+
+    <!-- Table -->
+    <section class="section-box">
+      <h2>Sample Table</h2>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+        </tr>
+        <tr>
+          <td>Alice</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <td>Bob</td>
+          <td>22</td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- Form -->
+    <section class="section-box">
+      <h2>Contact Form</h2>
+      <form>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name">
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email">
+
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender">
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+
+        <label for="message">Message:</label>
+        <textarea id="message" rows="4" cols="30"></textarea>
+
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 My Practice Page | <a href="#">Privacy Policy</a></p>
+  </footer>
+
+</body>
+
+</html>
