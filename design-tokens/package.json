@@ -1,0 +1,9 @@
+{
+  "name": "@azm-rental/design-tokens",
+  "type": "module",
+  "private": true,
+
+  "scripts": {
+    "generate": "bun convert.mjs"
+  }
+}

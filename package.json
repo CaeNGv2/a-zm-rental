@@ -1,5 +1,5 @@
 {
-  "name": "workspace",
+  "name": "azm-rental",
   "type": "module",
   "private": true,
   "devDependencies": {
@@ -10,6 +10,8 @@
   },
   "scripts": {
     "serve": "bun serve.ts",
-    "serve:watch": "bun --watch serve.ts"
+    "serve:watch": "bun --watch serve.ts",
+    "format:check": "bun fmt --check",
+    "generate": "bun run --filter \"*/design-tokens\" generate"
   }
 }
