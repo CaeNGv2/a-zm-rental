@@ -16,6 +16,35 @@ window.onMounted = (fn) => {
 };
 
 class HtmlComponent extends HTMLElement {
+  #props = {};
+
+  // Getter and setter to allow passing objects by reference via JS
+  get props() {
+    return this.#props;
+  }
+
+  set props(value) {
+    this.#props = value;
+    // Re-render if already connected to DOM
+    if (this.isConnected) {
+      this.connectedCallback();
+    }
+  }
+
+  addAttrsToProps() {
+    for (const attr of this.attributes) {
+      if (attr.name === "src") continue;
+
+      // prop-attr-liek-this
+      const kebabName = attr.name.toLowerCase();
+      // propAttrLiekThis
+      const camelName = kebabName.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+
+      this.#props = {...this.#props, [camelName]: attr.value}
+        //console.log("camel name : ", camelName); // dbg
+    }
+  }
+  
   async connectedCallback() {
     const src = this.getSrcAttr();
 
@@ -48,6 +77,9 @@ class HtmlComponent extends HTMLElement {
     this.dispatchEvent(new CustomEvent("loaded", {
       detail: { src }
     }));
+    window.dispatchEvent(new CustomEvent("componentLoaded", {
+      detail: { src }
+    }))
   }
 
   getSrcAttr() {
@@ -65,24 +97,16 @@ class HtmlComponent extends HTMLElement {
     const response = await fetch(src);
     let html = await response.text();
 
-    for (const attr of this.attributes) {
-      if (attr.name === "src") continue;
+    this.addAttrsToProps();
 
-      // prop-attr-liek-this
-      const kebabName = attr.name.toLowerCase();
-      // propAttrLiekThis
-      const camelName = kebabName.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-
-      html = html
-        .replaceAll(
-          `{{${kebabName}}}`,
-          attr.value
-        )
-        .replaceAll(
-          `{{${camelName}}}`,
-          attr.value
-        );
-        //console.log("camel name : ", camelName); // dbg
+    // Evaluate template expressions using the component's props context
+    // support strings like `${'★'.repeat(props.stars)}`
+    try {
+      // pass props to component template
+      const renderFn = new Function('props', `return \`${html}\`;`);
+      html = renderFn(this.#props);
+    } catch (e) {
+      console.error("Template rendering error in component:", src, e);
     }
 
     // save existing custom child nodes to append back later

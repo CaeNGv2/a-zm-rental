@@ -48,7 +48,7 @@ function resolveReferences(value, tokenSet) {
 /**
  * Converts a specific Penpot token set into clean CSS variable strings
  */
-function generateCssVariables(tokenSet) {
+function generateCssVariables(tokenSet, refGlobalTokenSet) {
   const variables = [];
 
   for (const [key, tokenData] of Object.entries(tokenSet)) {
@@ -62,8 +62,8 @@ function generateCssVariables(tokenSet) {
         prefixStr = `${CONFIG.prefix[tokenData.$type]}-`;
       }
 
-      // Resolve aliases using the local token set to match prefixes correctly
-      const cleanValue = resolveReferences(tokenData.$value, tokenSet);
+      // Resolve aliases using the local and global token set to match prefixes correctly
+      const cleanValue = resolveReferences(tokenData.$value, {...refGlobalTokenSet, ...tokenSet});
 
       // Preserve comments if descriptions exist
       const comment = tokenData.$description ? ` /* ${tokenData.$description} */` : "";
@@ -94,7 +94,7 @@ function build() {
     const darkTokens = rawData[darkKey] || {};
 
     const defaultLightVars = generateCssVariables(globalTokens);
-    const darkVars = generateCssVariables(darkTokens); // Only output unique dark token entries
+    const darkVars = generateCssVariables(darkTokens, globalTokens); // Only output unique dark token entries
 
     const cssContent = [
       `/* ==========================================================================`,

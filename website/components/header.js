@@ -1,5 +1,32 @@
 
 
+// Programmatic navigation items list (synced across desktop & mobile)
+const NAV_ITEMS = [
+  { name: "Fleet", href: "index.html#" },
+  { name: "How It Works", href: "index.html#why-azoom" },
+  { name: "FAQ", href: "#" },
+  { name: "Contact Us", href: "#" },
+];
+
+
+function renderNavItems() {
+  const containers = document.querySelectorAll(".header-js-nav-container");
+  containers.forEach((container) => {
+    container.innerHTML = "";
+    NAV_ITEMS.forEach((item) => {
+      const a = document.createElement("a");
+      a.href = item.href;
+      a.textContent = item.name;
+      if (item.class) {
+        a.classList.add(item.class);
+      }
+      container.appendChild(a);
+    });
+  });
+}
+
+
+
 async function updateHeaderUser() {
   console.log("updateHeaderUser"); // dbg
 
@@ -8,33 +35,36 @@ async function updateHeaderUser() {
   const user = await window.siteApi.getCurrentUserProfile();
   const userEl = document.getElementById("header-user-id");
   const userNameEl = document.getElementById("header-user-name");
+  const userStatusText = document.getElementById("header-user-status-text");
   const logoutBtn = document.getElementById("header-logout-btn");
   const loginLink = document.getElementById("header-login-btn");
+
+  if (userStatusText) {
+    if (user) {
+      userStatusText.textContent = `Hello, ${user.name || user.id}!`;
+    } else {
+      userStatusText.textContent = "Please log in.";
+    }
+  }
+
+  if (logoutBtn) {
+    logoutBtn.style.display = user ? "inline-block" : "none";
+    logoutBtn.onclick = () => {
+      window.siteApi.logout();
+    };
+  }
+
+  if (loginLink) {
+    loginLink.style.display = user ? "none" : "inline-block";
+  }
 
   if (userEl) {
     if (user) {
       userEl.textContent = user.id;
-      userNameEl.textContent = user.name;
-      
-      if (logoutBtn) {
-        logoutBtn.style.display = "inline";
-        logoutBtn.onclick = () => {
-          window.siteApi.logout();
-          //window.location.reload();
-        };
-      }
-      if (loginLink) {
-        loginLink.style.display = "none";
-      }
+      if (userNameEl) userNameEl.textContent = user.name;
     } else {
       userEl.textContent = "Guest";
-      userNameEl.textContent = "Guest";
-      if (logoutBtn) {
-        logoutBtn.style.display = "none";
-      }
-      if (loginLink) {
-        loginLink.style.display = "inline";
-      }
+      if (userNameEl) userNameEl.textContent = "Guest";
     }
   }
 
@@ -53,6 +83,9 @@ async function updateHeaderUser() {
 }
 
 // Listen when this component loaded
-window.onMounted(updateHeaderUser);
+window.onMounted(() => {
+  renderNavItems();
+  updateHeaderUser();
+});
 // when auth change
-window.addEventListener("authChange", updateHeaderUser)
+window.addEventListener("authChange", updateHeaderUser);

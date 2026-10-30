@@ -5,6 +5,11 @@ Main purpose: Keep stylign consistent across pages and avoid maintenenace haedac
 
 Components are injected into the DOM at runtime by the script `./assets/component.js`. Components are used by defining the custom html tag: `<html-component src="path to component html"></html>`
 
+### Icons
+
+Icons are heroicons and embedded directly into code.
+
+https://heroicons.com/
 
 ### Responsiveness & Mobile-friendliness
 

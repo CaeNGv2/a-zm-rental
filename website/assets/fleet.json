@@ -1,0 +1,222 @@
+{
+  "models": [
+    {
+      "modelId": "mazda_6_3rd_gen",
+      "name": "Mazda 6 (3rd Gen)",
+      "type": "5 Seater Sedan",
+      "imgPath": "assets/img/mazda-6-(3rd-gen).jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 110
+    },
+    {
+      "modelId": "toyota_wish",
+      "name": "Toyota Wish",
+      "type": "7 Seater MPV",
+      "imgPath": "assets/img/toyota-wish.jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 120
+    },
+    {
+      "modelId": "toyota_hiace",
+      "name": "Toyota Hiace",
+      "type": "2 Seater Van",
+      "imgPath": "assets/img/toyota-hiace.jpg",
+      "gearTypeDesc": "Manual",
+      "dailyRateSGD": 130
+    },
+    {
+      "modelId": "mitsubishi_outlander",
+      "name": "Mitsubishi Outlander",
+      "type": "7 Seater SUV",
+      "imgPath": "assets/img/mitsubishi-outlander.jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 135
+    },
+    {
+      "modelId": "hyundai_elantra",
+      "name": "Hyundai Elantra",
+      "type": "5 Seater Sedan",
+      "imgPath": "assets/img/hyundai-elantra.jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 95
+    },
+    {
+      "modelId": "nissan_nv200",
+      "name": "Nissan NV200",
+      "type": "2 Seater Van",
+      "imgPath": "assets/img/nissan-nv200.jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 100
+    },
+    {
+      "modelId": "honda_civic",
+      "name": "Honda Civic",
+      "type": "5 Seater Sedan",
+      "imgPath": "assets/img/honda-civic.jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 115
+    },
+    {
+      "modelId": "honda_odyssey",
+      "name": "Honda Odyssey",
+      "type": "7 Seater MPV",
+      "imgPath": "assets/img/honda-odyssey.jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 150
+    },
+    {
+      "modelId": "toyota_sienta",
+      "name": "Toyota Sienta",
+      "type": "7 Seater MPV",
+      "imgPath": "assets/img/toyota-sienta.jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 105
+    },
+    {
+      "modelId": "mazda_cx_3",
+      "name": "Mazda CX-3",
+      "type": "5 Seater SUV",
+      "imgPath": "assets/img/mazda-cx-3.jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 100
+    },
+    {
+      "modelId": "honda_fit",
+      "name": "Honda Fit",
+      "type": "5 Seater Hatchback",
+      "imgPath": "assets/img/honda-fit.jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 85
+    },
+    {
+      "modelId": "honda_vezel",
+      "name": "Honda Vezel",
+      "type": "5 Seater SUV",
+      "imgPath": "assets/img/honda-vezel.jpg",
+      "gearTypeDesc": "Automatic",
+      "dailyRateSGD": 110
+    }
+  ],
+  "fleet": [
+    {
+      "modelId": "mazda_6_3rd_gen",
+      "appearanceDesc": "Soul Red Crystal",
+      "regNum": "SFA1234X",
+      "available": true
+    },
+    {
+      "modelId": "mazda_6_3rd_gen",
+      "appearanceDesc": "Snowflake White Pearl",
+      "regNum": "SGB5678Y",
+      "available": false
+    },
+    {
+      "modelId": "toyota_wish",
+      "appearanceDesc": "Silver Metallic",
+      "regNum": "SHC9876Z",
+      "available": true
+    },
+    {
+      "modelId": "toyota_wish",
+      "appearanceDesc": "Black Mica",
+      "regNum": "SLD5432A",
+      "available": true
+    },
+    {
+      "modelId": "toyota_hiace",
+      "appearanceDesc": "Solid White",
+      "regNum": "SGE1122B",
+      "available": true
+    },
+    {
+      "modelId": "toyota_hiace",
+      "appearanceDesc": "Silver Mica Metallic",
+      "regNum": "SFF3344C",
+      "available": false
+    },
+    {
+      "modelId": "mitsubishi_outlander",
+      "appearanceDesc": "Cosmic Blue",
+      "regNum": "SGG5566D",
+      "available": true
+    },
+    {
+      "modelId": "hyundai_elantra",
+      "appearanceDesc": "Fluidic Gray",
+      "regNum": "SHH7788E",
+      "available": true
+    },
+    {
+      "modelId": "hyundai_elantra",
+      "appearanceDesc": "Polar White",
+      "regNum": "SJJ9900F",
+      "available": true
+    },
+    {
+      "modelId": "nissan_nv200",
+      "appearanceDesc": "Brilliant Silver",
+      "regNum": "SKK1239G",
+      "available": false
+    },
+    {
+      "modelId": "nissan_nv200",
+      "appearanceDesc": "Solid White",
+      "regNum": "SLL2837A",
+      "available": true
+    },
+    {
+      "modelId": "honda_civic",
+      "appearanceDesc": "Modern Steel Metallic",
+      "regNum": "SMM4567H",
+      "available": true
+    },
+    {
+      "modelId": "honda_civic",
+      "appearanceDesc": "Rallye Red",
+      "regNum": "SNN8901J",
+      "available": false
+    },
+    {
+      "modelId": "honda_odyssey",
+      "appearanceDesc": "Platinum White Pearl",
+      "regNum": "SPP2345K",
+      "available": true
+    },
+    {
+      "modelId": "toyota_sienta",
+      "appearanceDesc": "Vintage Brown Pearl",
+      "regNum": "SRR6789L",
+      "available": true
+    },
+    {
+      "modelId": "toyota_sienta",
+      "appearanceDesc": "Super White II",
+      "regNum": "STT3456M",
+      "available": true
+    },
+    {
+      "modelId": "mazda_cx_3",
+      "appearanceDesc": "Machine Gray",
+      "regNum": "SUU7890N",
+      "available": false
+    },
+    {
+      "modelId": "honda_fit",
+      "appearanceDesc": "Luminous Blue Pearl",
+      "regNum": "SVV1112P",
+      "available": true
+    },
+    {
+      "modelId": "honda_fit",
+      "appearanceDesc": "Taffeta White",
+      "regNum": "SWW3334Q",
+      "available": true
+    },
+    {
+      "modelId": "honda_vezel",
+      "appearanceDesc": "Crystal Black Pearl",
+      "regNum": "SXX5556R",
+      "available": true
+    }
+  ]
+}

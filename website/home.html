@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Styled HTML5 Page with Media</title>
+  <title>AZoom Car Rental - Renting in Singapore hasn't been this easy!</title>
   <link rel="stylesheet" href="assets/main.css" />
   <script src="assets/main.js" type="module" defer></script> <!-- load main.js as ESM for imports -->
   <!-- <script src="assets/api.js" defer></script>
@@ -14,92 +14,521 @@
 <body>
 
   <!-- Header and Navigation -->
-  <html-component src="components/header.html"></html-component>
+  <header><html-component src="components/header.html"></html-component></header>
 
-  <!-- Main Content -->
-  <main>
-    <!-- User Session & User ID Display -->
-    <section class="section-box display-user-status">
-      <h2>User Session</h2>
-      <p>Current User ID: <strong class="display-user-id">Guest (Not logged in)</strong><span class="display-user-name"></span></p>
-      <div>
-        <a href="login.html">Login / Switch User</a>
-        <button type="button" class="action-logout" style="display: none; margin-left: 8px;">Logout</button>
+  <!-- Main Page Content -->
+  <main class="home-main-container">
+
+
+    <!-- Hero Section -->
+    <section class="home-hero-section">
+      <div class="home-hero-wrapper content-center">
+        <div class="home-hero-content">
+          <!--span class="home-hero-badge">A Rental Experience Redefined</span-->
+          <h1 class="text-display text-size-large">
+            Renting in Singapore<br />hasn't been this easy!
+          </h1>
+          <p class="home-hero-desc">
+            Seamless booking, zero hidden fees, and transparent pricing. Choose from our well-maintained fleet and hit the road across Singapore with complete peace of mind.
+          </p>
+          <div class="home-hero-actions">
+            <a href="book.html" class="btn-primary btn-bigger">Get Started</a>
+            <a href="#why-azoom" class="btn-less btn-bigger">How It Works</a>
+          </div>
+        </div>
+
+        <!-- <div class="home-hero-visual">
+
+          <div class="hero-image-placeholder">
+            <div class="hero-image-overlay">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="hero-car-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.25V4.875A1.125 1.125 0 0 0 13.125 3.75H4.875A1.125 1.125 0 0 0 3.75 4.875V14.25m0 0h16.5" />
+              </svg>
+              <span class="hero-placeholder-label">Premium Fleet & Immediate Availability</span>
+            </div>
+          </div>
+        </div> -->
       </div>
     </section>
 
-    <section class="section-box">
-      <h2>About HTML</h2>
-      <p><strong>HTML</strong> is the foundation of web development.
-        It allows us to structure text, images, media, and forms.</p>
-    </section>
-
-    <!-- Media Section -->
-    <section class="section-box">
-      <h2>Media Showcase</h2>
-      <img
-        src="https://hips.hearstapps.com/hmg-prod/images/c33b2259-8c6b-4308-bc6f-5373d8a6600d.jpeg?crop=0.668xw:1.00xh;0.194xw,0&resize=640:*"
-        alt="Sample Image" width="300px" class="responsive-img">
-      <p>This is a sample image embedded in the page.</p>
-
-      <div class="video-container">
-        <video controls>
-          <source src="sample.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
+    <!-- Why AZoom Section -->
+    <section class="home-why-section content-center" id="why-azoom">
+      <div class="home-section-header">
+        <h2 class="text-display">Why AZoom Rental?</h2>
+        <p class="section-subtitle">Drive with absolute confidence with our customer-first rental promises.</p>
       </div>
-      <p>Above is a sample video embedded using the HTML5 <code>&lt;video&gt;</code> tag.</p>
+
+      <div class="why-cards-grid">
+        <!-- Article 1: Easy Online Booking -->
+        <article class="why-card">
+          <div class="why-card-icon">
+            <!-- Heroicon: Device Phone Mobile / Cursor Click -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+            </svg>
+          </div>
+          <h3 class="why-card-tagline">Easy Online Booking</h3>
+          <p class="why-card-subtitle">Grab your car online in minutes with instant digital confirmation.</p>
+        </article>
+
+        <!-- Article 2: Transparent & Clear Terms -->
+        <article class="why-card">
+          <div class="why-card-icon">
+            <!-- Heroicon: Document Check -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 0 1 9 9v.375M10.125 2.25A3.375 3.375 0 0 1 13.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 0 1 3.375 3.375M9 15l2.25 2.25L15 12" />
+            </svg>
+          </div>
+          <h3 class="why-card-tagline">Transparent &amp; Clear Terms</h3>
+          <p class="why-card-subtitle">No surprise deposits, confusing fine print, or unexpected charges.</p>
+        </article>
+
+        <!-- Article 3: No Hidden Fuel Fees -->
+        <article class="why-card">
+          <div class="why-card-icon">
+            <!-- Heroicon: Sparkles / Fuel pump alternative -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 1 3 2.48Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+            </svg>
+          </div>
+          <h3 class="why-card-tagline">No Hidden Fuel Fees</h3>
+          <p class="why-card-subtitle">Pay your own fuel: pick up with what's in the tank and return the same level.</p>
+        </article>
+
+        <!-- Article 4: 24/7 Roadside Assistance & Support -->
+        <article class="why-card">
+          <div class="why-card-icon">
+            <!-- Heroicon: Shield Check -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+            </svg>
+          </div>
+          <h3 class="why-card-tagline">24/7 Roadside<br />Assistance &amp; Support</h3>
+          <p class="why-card-subtitle">Round-the-clock emergency support across Singapore wherever you are.</p>
+        </article>
+      </div>
     </section>
 
-    <!-- Table -->
-    <section class="section-box">
-      <h2>Sample Table</h2>
-      <table>
-        <tr>
-          <th>Name</th>
-          <th>Age</th>
-        </tr>
-        <tr>
-          <td>Alice</td>
-          <td>20</td>
-        </tr>
-        <tr>
-          <td>Bob</td>
-          <td>22</td>
-        </tr>
-      </table>
-    </section>
+    <!-- Social Proof Section -->
+    <section class="home-social-proof-section content-center">
+      <div class="home-section-header">
+        <h2 class="text-display">Here's what customers say...</h2>
+        <p class="section-subtitle">Real experiences from drivers who chose AZoom for their journeys.</p>
+      </div>
 
-    <!-- Form -->
-    <section class="section-box">
-      <h2>Contact Form</h2>
-      <form>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name">
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email">
-
-        <label for="gender">Gender:</label>
-        <select id="gender" name="gender">
-          <option>Male</option>
-          <option>Female</option>
-          <option>Other</option>
-        </select>
-
-        <label for="message">Message:</label>
-        <textarea id="message" rows="4" cols="30"></textarea>
-
-        <button type="submit">Submit</button>
-      </form>
+      <!-- insert by js -->
+      <div class="home-testimonials-grid" id="home-testimonials-js"></div>
+      </div>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 My Practice Page | <a href="#">Privacy Policy</a></p>
+  <!-- Prototype-Matched Footer with Sitemap & Find Us -->
+  <footer class="home-footer">
+    <div class="home-footer-inner">
+      <div class="footer-col footer-find-us">
+        <h3 class="footer-title">Find us</h3>
+        <p class="footer-address">
+          2 Bedok North Loop<br />
+          #01-102 Singapore, 764464<br />
+          <strong>AZoom HQ</strong>
+        </p>
+        <p class="footer-hotline">
+          Hotline: <a href="tel:+6538272842">+65 3827 2842</a>
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-subtitle">Fleet &amp; Pricing</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Fleet Directory</a></li>
+          <li><a href="#">Sedans &amp; Compact</a></li>
+          <li><a href="#">SUVs &amp; MPVs</a></li>
+          <li><a href="#">Long-term Rental</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-subtitle">Rental</h4>
+        <ul class="footer-links">
+          <li><a href="#why-azoom">How It Works</a></li>
+          <li><a href="#">Rental Guidelines</a></li>
+          <li><a href="#">Insurance &amp; Excess</a></li>
+          <li><a href="book.html">Book Online</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-subtitle">Help &amp; Terms</h4>
+        <ul class="footer-links">
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom-bar text-size-normal13">
+      <p>&copy; 2026 AZoom Car Rental. All rights reserved.</p>
+    </div>
   </footer>
 
+  <style>
+  
+.home-main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  padding-block-end: 24px; /* bottom padding, top is hero so dont affect him */
+}
+
+/* Section common headers */
+.home-section-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.home-section-header h2 {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.section-subtitle {
+  color: var(--color-surface-inverse-lower);
+  font-size: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Hero Section */
+.home-hero-section {
+  padding-block: 30px 30px;
+  background-color: var(--color-container);
+  background-image: url("assets/img/hero-car-20.png");
+  background-repeat: no-repeat;
+  background-position: right;
+  background-size: contain;
+}
+
+.home-hero-wrapper {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 48px;
+}
+.home-hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+.home-hero-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background-color: var(--color-container);
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.home-hero-desc {
+  color: var(--color-surface-inverse-lower);
+  max-width: 520px;
+}
+.home-hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: 8px;
+}
+.home-hero-actions .btn-bigger {
+  min-width: 140px;
+}
+
+/* Hero visual / image placeholder */
+.home-hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hero-image-placeholder {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 380px;
+  background: linear-gradient(135deg, var(--color-container) 0%, var(--color-surface) 100%);
+  border: 1px solid var(--color-outline);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+.hero-image-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+.hero-car-icon {
+  width: 72px;
+  height: 72px;
+  color: var(--color-primary);
+}
+.hero-placeholder-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-surface-inverse-lower);
+}
+
+/* Why AZoom cards */
+.home-why-section {
+  padding-block: 20px;
+}
+.why-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.why-card {
+  background-color: var(--color-container-lowest);
+  border: 1px solid var(--color-outline);
+  border-radius: 12px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.why-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+}
+.why-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background-color: var(--color-container);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+.why-card-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.why-card-tagline {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-surface-inverse);
+  line-height: 1.3;
+}
+.why-card-subtitle {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-surface-inverse-lower);
+}
+
+/* Social Proof / Testimonials */
+.home-social-proof-section {
+  padding-block: 20px 40px;
+}
+.home-testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.testimonial-card {
+  background-color: var(--color-surface-canvas);
+  border: 1px solid var(--color-outline);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: stretch;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+.testimonial-stars {
+  color: #f59e0b;
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+.testimonial-quote {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-surface-inverse);
+  flex-grow: 1;
+}
+.testimonial-author {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  border-top: 1px solid var(--color-outline);
+  padding-top: 12px;
+}
+.testimonial-author strong {
+  color: var(--color-surface-inverse);
+  font-weight: 600;
+}
+.testimonial-author span {
+  color: var(--color-surface-inverse-lower);
+}
+
+/* footer & sitema */
+.home-footer {
+  background-color: var(--color-surface-canvas);
+  padding-top: 50px;
+  color: var(--color-surface-inverse);
+}
+.home-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 40px 24px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 36px;
+}
+.footer-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.footer-address {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-surface-inverse-lower);
+  margin-bottom: 12px;
+}
+.footer-address strong {
+  color: var(--color-surface-inverse);
+}
+.footer-hotline {
+  font-size: 14px;
+  font-weight: 500;
+}
+.footer-hotline a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.footer-hotline a:hover {
+  text-decoration: underline;
+}
+.footer-subtitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--color-surface-inverse);
+}
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-links a {
+  color: var(--color-surface-inverse-lower);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 150ms ease;
+}
+.footer-links a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+.footer-bottom-bar {
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-surface-inverse-lower);
+}
+
+/* Responsive Breakpoints for Home */
+@media (max-width: 900px) {
+  .home-hero-wrapper {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .why-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .home-footer-inner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-main-container {
+    gap: 48px; /* reduced gap */
+  }
+  .home-hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .home-hero-actions a {
+    width: 100%;
+  }
+  .why-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-footer-inner {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+  </style>
+<script type="module">
+  /**
+   * @type {{author:string,description:string,rating:number}[]}
+   */
+  const reviews = [
+    {
+      author: "Kumar Sathi",
+      description: "The smoothest car rental process in SG... Car was clean, key pickup was effortless, and no nasty surprise bills",
+      rating: 5,
+      photo: "assets/img/review-kumar.jpg"
+    },
+    {
+      author: "Sarah Lum",
+      description: "Good fuel policy and prompt 24/7 support when I had issue late at night. Definitely my go-to service.",
+      rating: 5,
+      photo: "assets/img/review-sarah.jpg",
+    },
+    {
+      author: "Mohd Sahla bin Rahman",
+      description: "Transparent pricing, modern fleet, and straightforward booking. Highly recommend to tourists and locals alike.",
+      rating: 5,
+      photo: null,
+    }
+  ];
+
+  const testimonialContainer = document.getElementById("home-testimonials-js");
+  for (let review of reviews) {
+    const card = document.createElement("html-component");
+    card.setAttribute("src", "components/testimonial-card.html");
+    card.props = {
+      star: review.rating,
+      quote: review.description,
+      author: review.author,
+      photo: review.photo
+    };
+    testimonialContainer.appendChild(card);
+  }
+
+  </script>
 </body>
 
 </html>

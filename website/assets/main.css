@@ -1,3 +1,22 @@
+/**
+ * EXTERNAL IMPORTS (do not add styling before @import)
+ */
+
+/*
+  Import specific GOogle fonts
+  https://fonts.google.com/selection/embed
+
+  Select fonts -> embed -> @import
+
+  Fonts:
+  - Inter
+  - Space Grotesk
+*/
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Grotesk:wght@300..700&display=swap");
+
+/**
+ * DESIGN TOKENS, BRANDING AND THEMING
+ */
 
 :root, [data-theme="light"] {
   --color-surface-inverse: var(--color-text-dark);
@@ -18,16 +37,271 @@
 }
 
 [data-theme="dark"] {
-  --color-surface-inverse: var(--text-light);
+  --color-surface-inverse: var(--color-text-light);
   --color-surface-inverse-lower: #d9dee3;
   --color-container-highest: #37434f;
   --color-secondary: #1ca1b0;
   --color-outline: #8e8e8e;
   --color-surface: #2d3842;
-  --color-text-inverse: var(--text-dark);
+  --color-text-inverse: var(--color-text-dark);
   --color-primary: #93c56b;
-  --color-text-default: var(--text-light);
+  --color-text-default: var(--color-text-light);
   --color-surface-canvas: #263239;
   --color-container: #323e49;
 }
 
+/**
+ * SITE GLOBALS
+ */
+
+/* css resets - almost all modern sites do this. style against modern standards */
+*,
+*::before,
+*::after {
+  /* widths account for padding & margins */
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --transition-background:
+    background-color 256ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 256ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* default element styling */
+body {
+  background-color: var(--color-surface-canvas);
+  color: var(--color-surface-inverse);
+  /* smoother dark/light switching */
+  transition: var(--transition-background);
+
+  /* see: text-standard */
+}
+
+/* affects tab focus ring */ 
+/* 2. GLOBAL FOCUS RING FIX */
+*:focus-visible {
+  /* override default black ring color (it wasnt dynamic with color-scheme */
+  outline: 2px solid var(--color-surface-inverse-lower);
+  
+  /* nice visual gap between the element and the ring */
+  outline-offset: 2px;
+}
+
+h1,
+h2 {
+  /* reset weight */
+  font-weight: 400;
+  /* see: text-display */
+}
+
+main {
+  background-color: var(--color-surface);
+  transition: var(--transition-background);
+  margin: 0 10px;
+}
+
+/* a comfortable max content width that is centered (using auto margin) for the eyes to read */
+.content-center {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 16px;
+}
+
+/* generic weights */
+.text-weight-normal {
+  font-weight: 400;
+}
+.text-weight-medium {
+  font-weight: 500;
+}
+.text-weight-bold {
+  font-weight: 600;
+}
+
+/* typography: display */
+.text-display,
+h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 24px;
+  line-height: normal;
+}
+.text-display.text-size-large,
+h1 {
+  font-size: 44px;
+}
+
+/* optimise text-display size for mobile */
+@media (max-width: 640px) {
+  .text-display.text-size-large,
+  h1 {
+    font-size: 32px;
+  }
+}
+
+/* typography: standard */
+.text-standard,
+body {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  line-height: 1.6;
+}
+
+.text-size-normal16,
+.text-size-normal,
+body {
+  font-size: 16px;
+}
+.text-size-normal18 {
+  font-size: 18px;
+}
+.text-size-normal14 {
+  font-size: 14px;
+}
+.text-size-normal13 {
+  font-size: 13px;
+}
+
+/* optimise text-size for mobile */
+@media (max-width: 640px) {
+  .text-size-normal18 {
+    font-size: 16px;
+  }
+}
+
+/* various button styles */
+.btn-icon {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 150ms ease;
+}
+.btn-icon:hover {
+  background-color: var(--color-container);
+}
+
+.btn-raw,
+.btn-primary,
+.btn-secondary,
+.btn-less {
+  display: flex;
+  padding-block: 6px;
+  padding-inline: 6px;
+  border-radius: 3px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  /*white-space: nowrap;*/
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.btn-raw:hover, .btn-less:hover {
+  background-color: var(--color-container-highest);
+}
+.btn-raw, .btn-less {
+  color: inherit;
+}
+.btn-raw {
+  background: transparent;
+}
+.btn-less {
+  outline: 1px solid var(--color-outline);
+}
+.btn-primary, .btn-secondary {
+  color: var(--color-text-inverse);
+}
+.btn-primary:hover, .btn-secondary:hover {
+  filter: brightness(85%);
+}
+.btn-primary {
+  background-color: var(--color-primary);
+}
+.btn-secondary {
+  background-color: var(--color-secondary);
+}
+
+.btn-bigger {
+  min-height: 48px;
+  padding-inline: 15px;
+  border-radius: 8px;
+}
+
+/* Base dropdown container (anchor element) */
+.dropdown-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* generic floating dropdown card */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background-color: var(--color-surface-canvas);
+  border: 1px solid var(--color-outline);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 12px 16px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1050;
+}
+.dropdown-menu.is-open {
+  display: flex;
+}
+
+/* geenric ful width overlay */
+.overlay-menu {
+  display: none;
+  position: absolute;
+  top: calc(100%); /* default to edge of containing block . can be set appropriately  */
+  left: 0;
+  width: 100%;
+  background-color: var(--color-surface-canvas);
+  border-bottom: 1px solid var(--color-outline);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  z-index: 1000;
+}
+.overlay-menu.is-open {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* convenience display util */
+
+@media (width > 640px) {
+  .display-none-above-sm {
+    display: none !important;
+  }
+}
+@media (width <= 640px) {
+  .display-none-sm {
+    display: none !important;
+  }
+}
+
+@media (width > 768px) {
+  .display-none-above-md {
+    display: none !important;
+  }
+}
+@media (width <= 768px) {
+  .display-none-md {
+    display: none !important;
+  }
+}
