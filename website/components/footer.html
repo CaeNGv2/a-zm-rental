@@ -1,0 +1,132 @@
+<div class="footer">
+  <div class="footer-inner">
+    <div class="footer-col footer-find-us">
+      <h3 class="footer-title">Find us</h3>
+      <p class="footer-address">
+        2 Bedok North Loop<br />
+        #01-102 Singapore, 764464<br />
+        <strong>AZoom HQ</strong>
+      </p>
+      <p class="footer-hotline">Hotline: <a href="tel:+6538272842">+65 3827 2842</a></p>
+    </div>
+
+    <div class="footer-col">
+      <h4 class="footer-subtitle">Fleet &amp; Pricing</h4>
+      <ul class="footer-links">
+        <li><a href="index.html">Fleet Directory</a></li>
+        <li><a href="#">Sedans &amp; Compact</a></li>
+        <li><a href="#">SUVs &amp; MPVs</a></li>
+        <li><a href="#">Long-term Rental</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4 class="footer-subtitle">Rental</h4>
+      <ul class="footer-links">
+        <li><a href="#why-azoom">How It Works</a></li>
+        <li><a href="#">Rental Guidelines</a></li>
+        <li><a href="#">Insurance &amp; Excess</a></li>
+        <li><a href="book.html">Book Online</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4 class="footer-subtitle">Help &amp; Terms</h4>
+      <ul class="footer-links">
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Terms &amp; Conditions</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom-bar text-size-normal13">
+    <p>&copy; 2026 AZoom Car Rental. All rights reserved.</p>
+  </div>
+</div>
+
+<style>
+  /* footer & sitema */
+  .footer {
+    background-color: var(--color-surface-canvas);
+    padding-top: 50px;
+    color: var(--color-surface-inverse);
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 40px 24px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 36px;
+  }
+  .footer-title {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .footer-address {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-surface-inverse-lower);
+    margin-bottom: 12px;
+  }
+  .footer-address strong {
+    color: var(--color-surface-inverse);
+  }
+  .footer-hotline {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .footer-hotline a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  .footer-hotline a:hover {
+    text-decoration: underline;
+  }
+  .footer-subtitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--color-surface-inverse);
+  }
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .footer-links a {
+    color: var(--color-surface-inverse-lower);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 150ms ease;
+  }
+  .footer-links a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  .footer-bottom-bar {
+    padding: 20px 24px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--color-surface-inverse-lower);
+  }
+
+  /* Responsive breakpoints  */
+  @media (max-width: 900px) {
+    .footer-inner {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+  }
+
+  /* @media (max-width: 640px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
+  }
+} */
+</style>

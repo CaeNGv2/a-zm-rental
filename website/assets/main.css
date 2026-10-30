@@ -305,3 +305,145 @@ body {
     display: none !important;
   }
 }
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.badge-success {
+  background-color: rgba(105, 148, 70, 0.15);
+  color: var(--color-primary);
+  border: 1px solid rgba(105, 148, 70, 0.3);
+}
+
+.badge-danger {
+  background-color: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+.badge-info {
+  background-color: rgba(18, 65, 91, 0.12);
+  color: var(--color-secondary);
+  border: 1px solid rgba(18, 65, 91, 0.25);
+}
+
+.badge-warning {
+  background-color: rgba(217, 119, 6, 0.15);
+  color: #d97706;
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+
+.badge-purple {
+  background-color: rgba(147, 51, 234, 0.12);
+  color: #9333ea;
+  border: 1px solid rgba(147, 51, 234, 0.25);
+}
+
+.badge-neutral {
+  background-color: var(--color-container);
+  color: var(--color-surface-inverse-lower);
+  border: 1px solid var(--color-outline);
+}
+
+/* Card Container */
+.card-box {
+  background-color: var(--color-surface-canvas);
+  border: 1px solid var(--color-outline);
+  border-radius: 12px;
+  padding: 24px;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.card-box-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Modal Popup Overlay */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-overlay.is-open {
+  display: flex;
+}
+
+.modal-window {
+  background-color: var(--color-surface-canvas);
+  color: var(--color-surface-inverse);
+  border: 1px solid var(--color-outline);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--color-outline);
+}
+
+.modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-outline);
+  background-color: var(--color-container);
+}
+
+/* Bill / Key-Value Line Items */
+.bill-line-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 8px;
+  border-bottom: 1px dashed var(--color-outline);
+  font-size: 14px;
+}
+
+.bill-line-item:last-child {
+  border-bottom: none;
+}
+
+.bill-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 12px 4px;
+  margin-top: 4px;
+  border-top: 2px solid var(--color-outline);
+  font-size: 18px;
+  font-weight: 700;
+}

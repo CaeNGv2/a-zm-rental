@@ -9,18 +9,21 @@ class ServerApi {
    * @returns {Promise<{status: number, data: {models: Array<any>, fleet: Array<any>}}>}
    */
   async getFleet() {
+    console.log("getFleet")
     await this.#mockDelay();
-    let fleetData = JSON.parse(localStorage.getItem("server.fleet") || "null");
-    if (!fleetData) {
-      try {
-        const res = await fetch("assets/fleet.json");
-        fleetData = await res.json();
-        localStorage.setItem("server.fleet", JSON.stringify(fleetData));
-      } catch (err) {
-        console.error("Failed to fetch assets/fleet.json:", err);
-        fleetData = { models: [], fleet: [] };
-      }
+    // let fleetData = JSON.parse(localStorage.getItem("server.fleet") || "null");
+    // if (!fleetData) {
+    let fleetData;
+    try {
+      const res = await fetch("assets/fleet.json");
+      console.log("fetch fleet.json");
+      fleetData = await res.json();
+      localStorage.setItem("server.fleet", JSON.stringify(fleetData));
+    } catch (err) {
+      console.error("Failed to fetch assets/fleet.json:", err);
+      fleetData = { models: [], fleet: [] };
     }
+    // }
 
     // Dynamic availability check based on active bookings
     const bookings = JSON.parse(localStorage.getItem("server.bookings") || "[]");
@@ -338,8 +341,6 @@ class SiteApi {
       return null;
     }
   }
-
-  // --- Fleet & Booking API Methods ---
 
   /**
    * Get fleet details from server

@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reserve Vehicle - AZoom Car Rental</title>
+    <link rel="stylesheet" href="assets/main.css" />
+    <script src="assets/main.js" type="module" defer></script>
+  </head>
+
+  <body>
+    <!-- Header and Navigation -->
+    <header><html-component src="components/header.html"></html-component></header>
+
+    <main>
+      <div class="content-center" style="padding-block: 40px; max-width: 960px">
+        <!-- Breadcrumb / Back Navigation -->
+        <div style="margin-bottom: 24px">
+          <a
+            href="book.html"
+            class="btn-less"
+            style="display: inline-flex; align-items: center; gap: 8px"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              style="width: 18px; height: 18px"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+              />
+            </svg>
+            Back to Fleet Catalog
+          </a>
+        </div>
+
+        <h1 class="text-display text-size-large" style="margin-bottom: 8px">
+          Complete Your Reservation
+        </h1>
+        <p
+          class="text-standard text-size-normal16"
+          style="color: var(--color-surface-inverse-lower); margin-bottom: 32px"
+        >
+          Review your car selection, choose your rental dates, and confirm your booking.
+        </p>
+
+        <!-- Layout: Left Form, Right Summary -->
+        <div
+          style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 32px"
+          class="reservation-grid"
+        >
+          <!-- Reservation Form -->
+          <div class="card-box">
+            <form id="reservation-form">
+              <!-- Selected Car Header (Dynamic) -->
+              <div
+                id="selected-car-banner"
+                style="
+                  display: flex;
+                  gap: 16px;
+                  align-items: center;
+                  padding-bottom: 20px;
+                  border-bottom: 1px solid var(--color-outline);
+                  margin-bottom: 24px;
+                "
+              >
+                <div
+                  style="
+                    width: 80px;
+                    height: 54px;
+                    border-radius: 8px;
+                    background-color: var(--color-container);
+                    overflow: hidden;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <img
+                    id="car-banner-img"
+                    src=""
+                    alt=""
+                    style="width: 100%; height: 100%; object-fit: cover"
+                  />
+                </div>
+                <div>
+                  <h3
+                    id="car-banner-name"
+                    class="text-display"
+                    style="font-size: 18px; font-weight: 600"
+                  >
+                    Loading model...
+                  </h3>
+                  <span id="car-banner-type" class="badge badge-neutral">...</span>
+                </div>
+              </div>
+
+              <!-- Date Range Inputs -->
+              <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px">
+                <h3 class="text-display" style="font-size: 18px; font-weight: 600">
+                  1. Rental Period
+                </h3>
+
+                <div
+                  style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px"
+                  class="date-inputs-grid"
+                >
+                  <div>
+                    <label
+                      for="start-date"
+                      style="display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px"
+                      >Start Date</label
+                    >
+                    <input
+                      type="date"
+                      id="start-date"
+                      required
+                      style="
+                        width: 100%;
+                        padding: 10px 12px;
+                        border-radius: 8px;
+                        border: 1px solid var(--color-outline);
+                        background-color: var(--color-surface-canvas);
+                        color: inherit;
+                        font-family: inherit;
+                      "
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="end-date"
+                      style="display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px"
+                      >End Date</label
+                    >
+                    <input
+                      type="date"
+                      id="end-date"
+                      required
+                      style="
+                        width: 100%;
+                        padding: 10px 12px;
+                        border-radius: 8px;
+                        border: 1px solid var(--color-outline);
+                        background-color: var(--color-surface-canvas);
+                        color: inherit;
+                        font-family: inherit;
+                      "
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Payment card details -->
+              <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px">
+                <h3 class="text-display" style="font-size: 18px; font-weight: 600">
+                  2. Payment Method
+                </h3>
+
+                <!-- saved card-->
+                <div
+                  style="
+                    border: 1px solid var(--color-primary);
+                    background-color: rgba(105, 148, 70, 0.06);
+                    border-radius: 8px;
+                    padding: 14px 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                  "
+                >
+                  <label
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 12px;
+                      cursor: pointer;
+                      width: 100%;
+                    "
+                  >
+                    <input
+                      type="radio"
+                      name="payment-card"
+                      value="4242"
+                      checked
+                      style="accent-color: var(--color-primary)"
+                    />
+                    <div>
+                      <div style="font-weight: 600; font-size: 15px">Visa ending in 4242</div>
+                      <div style="font-size: 13px; color: var(--color-surface-inverse-lower)">
+                        Expires 12/28 &bull; Mock Primary Card
+                      </div>
+                    </div>
+                  </label>
+                  <span class="badge badge-success">Saved</span>
+                </div>
+
+                <!-- add card mock -->
+                <button
+                  type="button"
+                  id="btn-add-card"
+                  class="btn-less"
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    padding: 12px;
+                    border-style: dashed;
+                  "
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    style="width: 18px; height: 18px"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                  Add New Card
+                </button>
+              </div>
+
+              <!-- Submit Button -->
+              <button
+                type="submit"
+                id="btn-confirm-booking"
+                class="btn-primary btn-bigger"
+                style="width: 100%; font-size: 16px; font-weight: 600"
+              >
+                Confirm Booking &amp; Reserve Vehicle
+              </button>
+            </form>
+          </div>
+
+          <!-- Order Summary Column -->
+          <div>
+            <div class="card-box" style="position: sticky; top: 90px">
+              <h3
+                class="text-display"
+                style="font-size: 20px; font-weight: 600; margin-bottom: 16px"
+              >
+                Booking Summary
+              </h3>
+
+              <div class="bill-line-item">
+                <span style="color: var(--color-surface-inverse-lower)">Vehicle Model</span>
+                <strong id="summary-car-name">--</strong>
+              </div>
+
+              <div class="bill-line-item">
+                <span style="color: var(--color-surface-inverse-lower)">Daily Rate</span>
+                <span id="summary-rate">--</span>
+              </div>
+
+              <div class="bill-line-item">
+                <span style="color: var(--color-surface-inverse-lower)">Rental Duration</span>
+                <span id="summary-days">--</span>
+              </div>
+
+              <div class="bill-line-item">
+                <span style="color: var(--color-surface-inverse-lower)">Assigned Vehicle</span>
+                <span class="badge badge-info" id="summary-plate-badge"
+                  >Auto-assigned upon booking</span
+                >
+              </div>
+
+              <div class="bill-line-item">
+                <span style="color: var(--color-surface-inverse-lower)">Fuel &amp; Insurance</span>
+                <span style="color: var(--color-primary); font-weight: 500">Included ($0)</span>
+              </div>
+
+              <div class="bill-total-row">
+                <span>Estimated Total</span>
+                <span style="color: var(--color-primary)" id="summary-total">$0 SGD</span>
+              </div>
+
+              <p
+                style="
+                  font-size: 12px;
+                  color: var(--color-surface-inverse-lower);
+                  margin-top: 16px;
+                  line-height: 1.5;
+                "
+              >
+                * No upfront deposit required. Payment line items and confirmation are logged
+                directly to your account.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Success Notification Modal -->
+    <div class="modal-overlay" id="success-modal">
+      <div class="modal-window">
+        <div class="modal-header">
+          <h3 class="text-display" style="font-size: 20px; font-weight: 600">Booking Confirmed!</h3>
+        </div>
+        <div class="modal-body">
+          <div style="text-align: center; padding-block: 10px">
+            <div
+              style="
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background-color: rgba(105, 148, 70, 0.15);
+                color: var(--color-primary);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 16px;
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                style="width: 32px; height: 32px"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+            </div>
+            <h4 style="font-size: 18px; margin-bottom: 6px">Your Vehicle Is Ready</h4>
+            <p
+              class="text-standard text-size-normal14"
+              style="color: var(--color-surface-inverse-lower)"
+            >
+              The mock server has allocated an available vehicle to your reservation:
+            </p>
+          </div>
+
+          <div class="card-box" style="padding: 16px; background-color: var(--color-container)">
+            <div class="bill-line-item">
+              <span>Booking ID:</span>
+              <strong id="modal-booking-id">--</strong>
+            </div>
+            <div class="bill-line-item">
+              <span>Assigned Car Plate:</span>
+              <strong class="badge badge-info" style="font-size: 15px" id="modal-car-plate"
+                >--</strong
+              >
+            </div>
+            <div class="bill-line-item">
+              <span>Model:</span>
+              <span id="modal-car-name">--</span>
+            </div>
+            <div class="bill-line-item">
+              <span>Total SGD:</span>
+              <strong style="color: var(--color-primary)" id="modal-total">--</strong>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="bookings.html" class="btn-primary" style="padding-inline: 20px"
+            >Go to My Bookings</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="home-footer">
+      <div class="footer-bottom-bar text-size-normal13">
+        <p>&copy; 2026 AZoom Car Rental. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <style>
+      @media (max-width: 768px) {
+        .reservation-grid {
+          grid-template-columns: 1fr !important;
+        }
+        .date-inputs-grid {
+          grid-template-columns: 1fr !important;
+        }
+      }
+    </style>
+
+    <script type="module">
+      let selectedModel = null;
+
+      async function initReservation() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const modelId = urlParams.get("modelId");
+
+        if (!modelId) {
+          window.location.href = "book.html";
+          return;
+        }
+
+        try {
+          selectedModel = await window.siteApi.getModelDetail(modelId);
+          if (!selectedModel) {
+            alert("Car model not found");
+            window.location.href = "book.html";
+            return;
+          }
+
+          // Populate Car Banner
+          document.getElementById("car-banner-name").textContent = selectedModel.name;
+          document.getElementById("car-banner-type").textContent =
+            `${selectedModel.type} (${selectedModel.gearTypeDesc})`;
+          const bannerImg = document.getElementById("car-banner-img");
+          bannerImg.src = selectedModel.imgPath;
+          bannerImg.alt = selectedModel.name;
+
+          // Set default dates: tomorrow to +3 days
+          const today = new Date();
+          const tomorrow = new Date(today);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const nextWeek = new Date(tomorrow);
+          nextWeek.setDate(nextWeek.getDate() + 2);
+
+          const formatDate = (d) => d.toISOString().split("T")[0];
+          const startInput = document.getElementById("start-date");
+          const endInput = document.getElementById("end-date");
+
+          startInput.min = formatDate(today);
+          startInput.value = formatDate(tomorrow);
+          endInput.min = formatDate(tomorrow);
+          endInput.value = formatDate(nextWeek);
+
+          const updateSummary = () => {
+            const s = new Date(startInput.value);
+            const e = new Date(endInput.value);
+            if (isNaN(s.getTime()) || isNaN(e.getTime()) || e < s) {
+              document.getElementById("summary-days").textContent = "Invalid range";
+              document.getElementById("summary-total").textContent = "$0 SGD";
+              return;
+            }
+            const diff = Math.max(
+              1,
+              Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24))
+            );
+            const total = diff * selectedModel.dailyRateSGD;
+
+            document.getElementById("summary-car-name").textContent = selectedModel.name;
+            document.getElementById("summary-rate").textContent =
+              `$${selectedModel.dailyRateSGD} / day`;
+            document.getElementById("summary-days").textContent =
+              `${diff} day${diff > 1 ? "s" : ""}`;
+            document.getElementById("summary-total").textContent = `$${total} SGD`;
+          };
+
+          startInput.addEventListener("change", () => {
+            endInput.min = startInput.value;
+            if (endInput.value < startInput.value) {
+              endInput.value = startInput.value;
+            }
+            updateSummary();
+          });
+          endInput.addEventListener("change", updateSummary);
+          updateSummary();
+
+          // "+ Add New Card" click handler
+          document.getElementById("btn-add-card").addEventListener("click", () => {
+            const note = document.getElementById("add-card-note");
+            note.style.display = note.style.display === "none" ? "block" : "none";
+          });
+
+          // Form Submit
+          document.getElementById("reservation-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btn-confirm-booking");
+            btn.disabled = true;
+            btn.textContent = "Processing reservation...";
+
+            try {
+              const booking = await window.siteApi.createBooking({
+                modelId: selectedModel.modelId,
+                startDate: startInput.value,
+                endDate: endInput.value,
+                cardLast4: "4242",
+              });
+
+              // Show success modal
+              document.getElementById("modal-booking-id").textContent = booking.bookingId;
+              document.getElementById("modal-car-plate").textContent = booking.carPlate;
+              document.getElementById("modal-car-name").textContent = booking.modelName;
+              document.getElementById("modal-total").textContent = `$${booking.totalAmount} SGD`;
+
+              document.getElementById("success-modal").classList.add("is-open");
+            } catch (err) {
+              alert(err.message || "Failed to make reservation");
+              btn.disabled = false;
+              btn.textContent = "Confirm Booking & Reserve Vehicle";
+            }
+          });
+        } catch (err) {
+          console.error("Error initializing reservation:", err);
+        }
+      }
+
+      document.addEventListener("DOMAndLibsLoaded", initReservation);
+    </script>
+  </body>
+</html>

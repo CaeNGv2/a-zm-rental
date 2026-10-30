@@ -2,12 +2,12 @@
 
 // Programmatic navigation items list (synced across desktop & mobile)
 const NAV_ITEMS = [
-  { name: "Fleet", href: "index.html#" },
+  { name: "Fleet", href: "book.html" },
+  { name: "My Bookings", href: "bookings.html" },
   { name: "How It Works", href: "index.html#why-azoom" },
   { name: "FAQ", href: "#" },
   { name: "Contact Us", href: "#" },
 ];
-
 
 function renderNavItems() {
   const containers = document.querySelectorAll(".header-js-nav-container");

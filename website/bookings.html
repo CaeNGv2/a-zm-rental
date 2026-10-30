@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Bookings - AZoom Car Rental</title>
+  <link rel="stylesheet" href="assets/main.css" />
+  <script src="assets/main.js" type="module" defer></script>
+</head>
+
+<body>
+  <!-- Header and Navigation -->
+  <header><html-component src="components/header.html"></html-component></header>
+
+  <main>
+    <div class="content-center" style="padding-block: 40px;">
+      <!-- Title & Controls Header -->
+      <div style="margin-bottom: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px;">
+        <div>
+          <h1 class="text-display text-size-large" style="margin-bottom: 8px;">My Rental Bookings</h1>
+          <p class="text-standard text-size-normal16" style="color: var(--color-surface-inverse-lower);">
+            Track active reservations, manage vehicle returns, and finalize line-item payments.
+          </p>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <button type="button" id="btn-refresh" class="btn-less" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            Refresh Status
+          </button>
+          <a href="book.html" class="btn-primary">+ Book Another Car</a>
+        </div>
+      </div>
+
+      <!-- Bookings List Container -->
+      <div id="bookings-container" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="card-box" style="text-align: center; padding: 48px;">
+          <p class="text-standard text-size-normal18">Loading your bookings...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Payment / Bill Overlay Popup -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 class="text-display" style="font-size: 20px; font-weight: 600;">Rental Final Invoice</h3>
+        <button type="button" class="btn-icon" id="btn-close-modal" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="text-standard text-size-normal14" style="color: var(--color-surface-inverse-lower);">
+          Vehicle inspection is complete with zero reported issues. Please review your line items to settle the rental invoice.
+        </p>
+
+        <!-- Bill Line Items Box -->
+        <div class="card-box" style="background-color: var(--color-container); padding: 18px;">
+          <div class="bill-line-item">
+            <span>Booking Reference:</span>
+            <strong id="bill-ref">--</strong>
+          </div>
+          <div class="bill-line-item">
+            <span>Vehicle Model:</span>
+            <span id="bill-model">--</span>
+          </div>
+          <div class="bill-line-item">
+            <span>Vehicle Plate:</span>
+            <span class="badge badge-neutral" id="bill-plate">--</span>
+          </div>
+          <div class="bill-line-item">
+            <span>Daily Rate:</span>
+            <span id="bill-rate">--</span>
+          </div>
+          <div class="bill-line-item">
+            <span>Duration:</span>
+            <span id="bill-days">--</span>
+          </div>
+          <div class="bill-line-item">
+            <span>Rental Subtotal:</span>
+            <strong id="bill-subtotal">--</strong>
+          </div>
+          <div class="bill-line-item">
+            <span>Excess due to damages:</span>
+            <strong style="color: var(--color-primary);">$0.00 SGD</strong>
+          </div>
+          <div class="bill-total-row">
+            <span>Total Payable:</span>
+            <span style="color: var(--color-primary);" id="bill-total">--</span>
+          </div>
+        </div>
+
+        <div style="font-size: 13px; color: var(--color-surface-inverse-lower); display: flex; align-items: center; gap: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 18px; height: 18px; color: var(--color-primary); flex-shrink: 0;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+          </svg>
+          Payment will be billed to your card on file (<span id="bill-card">Visa ending in 4242</span>).
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-less" id="btn-cancel-pay">Close</button>
+        <button type="button" class="btn-primary" id="btn-execute-pay" style="padding-inline: 24px;">Confirm &amp; Pay</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <html-component src="components/footer.html"></html-component>
+  </footer>
+
+  <script type="module">
+    let activeBookingToPay = null;
+
+    function renderStatusBadge(status) {
+      switch (status) {
+        case "upcoming":
+          return `<span class="badge badge-info">● Upcoming</span>`;
+        case "ongoing":
+          return `<span class="badge badge-success">● Ongoing</span>`;
+        case "pending staff checks":
+          return `<span class="badge badge-warning">⏳ Pending Staff Checks</span>`;
+        case "pending payment":
+          return `<span class="badge badge-danger">● Pending Payment</span>`;
+        case "completed":
+          return `<span class="badge badge-neutral" style="color: var(--color-primary); font-weight: 600;">✓ Completed</span>`;
+        default:
+          return `<span class="badge badge-neutral">${status}</span>`;
+      }
+    }
+
+    async function loadBookings() {
+      const container = document.getElementById("bookings-container");
+      try {
+        const bookings = await window.siteApi.getBookings();
+
+        if (bookings.length === 0) {
+          container.innerHTML = `
+            <div class="card-box" style="text-align: center; padding: 48px;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 56px; height: 56px; margin: 0 auto 16px; color: var(--color-surface-inverse-lower);">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5" />
+              </svg>
+              <h3 class="text-display" style="font-size: 20px; margin-bottom: 8px;">No Bookings Found</h3>
+              <p class="text-standard" style="color: var(--color-surface-inverse-lower); margin-bottom: 24px;">
+                You haven't made any car reservations yet.
+              </p>
+              <a href="book.html" class="btn-primary" style="display: inline-block;">Browse Vehicles</a>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = bookings.map((b) => {
+          let actionSection = "";
+
+          if (b.status === "ongoing") {
+            actionSection = `
+              <div style="display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--color-outline);">
+                <button type="button" class="btn-primary action-confirm-return" data-id="${b.bookingId}" style="padding-inline: 20px;">
+                  Confirm Return
+                </button>
+                <span style="font-size: 13px; color: var(--color-surface-inverse-lower);">
+                  Returning vehicle? Click to initiate staff checkout &amp; inspection.
+                </span>
+              </div>
+            `;
+          } else if (b.status === "pending staff checks") {
+            actionSection = `
+              <div style="display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--color-outline); background-color: rgba(217, 119, 6, 0.05); padding: 12px 16px; border-radius: 8px;">
+                <span style="font-size: 14px; color: #d97706; font-weight: 500;">
+                  ⏳ Vehicle is currently undergoing staff checks. System will verify and transition to payment within 7 seconds...
+                </span>
+              </div>
+            `;
+          } else if (b.status === "pending payment") {
+            actionSection = `
+              <div style="display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--color-outline);">
+                <button type="button" class="btn-primary action-pay" data-id="${b.bookingId}" style="padding-inline: 24px; background-color: #dc2626;">
+                  Pay Now ($${b.totalAmount} SGD)
+                </button>
+                <span style="font-size: 13px; color: var(--color-surface-inverse-lower);">
+                  Inspection passed with $0 damages. Click to review line items and complete payment.
+                </span>
+              </div>
+            `;
+          } else if (b.status === "completed") {
+            actionSection = `
+              <div style="margin-top: 12px; font-size: 13px; color: var(--color-primary); font-weight: 500;">
+                ✓ Rental finalized and payment captured. Thank you for driving with AZoom!
+              </div>
+            `;
+          }
+
+          return `
+            <div class="card-box" style="display: flex; flex-direction: column; gap: 12px;">
+              <!-- Header Row: Model, Ref, Status -->
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+                <div style="display: flex; gap: 16px; align-items: center;">
+                  <div style="width: 72px; height: 48px; border-radius: 6px; background-color: var(--color-container); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img src="${b.imgPath}" alt="${b.modelName}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none';" />
+                  </div>
+                  <div>
+                    <h3 class="text-display" style="font-size: 18px; font-weight: 600; margin-bottom: 2px;">${b.modelName}</h3>
+                    <div style="font-size: 13px; color: var(--color-surface-inverse-lower);">
+                      Ref: <strong>${b.bookingId}</strong> &bull; Assigned Plate: <strong class="badge badge-neutral" style="font-size: 12px;">${b.carPlate}</strong>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  ${renderStatusBadge(b.status)}
+                </div>
+              </div>
+
+              <!-- Rental Details Line -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; background-color: var(--color-container); padding: 12px 16px; border-radius: 8px; margin-top: 4px;">
+                <div>
+                  <span style="font-size: 12px; color: var(--color-surface-inverse-lower); display: block;">Period</span>
+                  <strong style="font-size: 14px;">${b.startDate} &rarr; ${b.endDate}</strong>
+                </div>
+                <div>
+                  <span style="font-size: 12px; color: var(--color-surface-inverse-lower); display: block;">Duration</span>
+                  <strong style="font-size: 14px;">${b.rentalDays} day${b.rentalDays > 1 ? "s" : ""}</strong>
+                </div>
+                <div>
+                  <span style="font-size: 12px; color: var(--color-surface-inverse-lower); display: block;">Rate</span>
+                  <strong style="font-size: 14px;">$${b.dailyRateSGD} / day</strong>
+                </div>
+                <div>
+                  <span style="font-size: 12px; color: var(--color-surface-inverse-lower); display: block;">Total Amount</span>
+                  <strong style="font-size: 15px; color: var(--color-primary);">$${b.totalAmount} SGD</strong>
+                </div>
+              </div>
+
+              <!-- Interactive Actions Section -->
+              ${actionSection}
+            </div>
+          `;
+        }).join("");
+
+        // Bind Action Handlers
+        document.querySelectorAll(".action-confirm-return").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const bookingId = btn.getAttribute("data-id");
+            btn.disabled = true;
+            btn.textContent = "Processing return...";
+            try {
+              await window.siteApi.confirmReturn(bookingId);
+              loadBookings();
+            } catch (err) {
+              alert(err.message || "Failed to confirm return");
+              loadBookings();
+            }
+          });
+        });
+
+        document.querySelectorAll(".action-pay").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const bookingId = btn.getAttribute("data-id");
+            const booking = bookings.find((b) => b.bookingId === bookingId);
+            if (!booking) return;
+
+            activeBookingToPay = booking;
+            // Populate modal line items
+            document.getElementById("bill-ref").textContent = booking.bookingId;
+            document.getElementById("bill-model").textContent = booking.modelName;
+            document.getElementById("bill-plate").textContent = booking.carPlate;
+            document.getElementById("bill-rate").textContent = `$${booking.dailyRateSGD} / day`;
+            document.getElementById("bill-days").textContent = `${booking.rentalDays} days (${booking.startDate} to ${booking.endDate})`;
+            document.getElementById("bill-subtotal").textContent = `$${booking.totalAmount}.00 SGD`;
+            document.getElementById("bill-total").textContent = `$${booking.totalAmount}.00 SGD`;
+            document.getElementById("bill-card").textContent = `Visa ending in ${booking.cardLast4 || "4242"}`;
+
+            // Open overlay modal
+            document.getElementById("payment-modal").classList.add("is-open");
+          });
+        });
+
+      } catch (err) {
+        console.error("Failed to load bookings:", err);
+      }
+    }
+
+    // Modal Events
+    document.getElementById("btn-close-modal").addEventListener("click", () => {
+      document.getElementById("payment-modal").classList.remove("is-open");
+    });
+    document.getElementById("btn-cancel-pay").addEventListener("click", () => {
+      document.getElementById("payment-modal").classList.remove("is-open");
+    });
+
+    document.getElementById("btn-execute-pay").addEventListener("click", async () => {
+      if (!activeBookingToPay) return;
+      const payBtn = document.getElementById("btn-execute-pay");
+      payBtn.disabled = true;
+      payBtn.textContent = "Processing payment...";
+
+      try {
+        await window.siteApi.payBooking(activeBookingToPay.bookingId);
+        document.getElementById("payment-modal").classList.remove("is-open");
+        payBtn.disabled = false;
+        payBtn.textContent = "Confirm & Pay";
+        loadBookings();
+      } catch (err) {
+        alert(err.message || "Payment failed");
+        payBtn.disabled = false;
+        payBtn.textContent = "Confirm & Pay";
+      }
+    });
+
+    document.getElementById("btn-refresh").addEventListener("click", () => {
+      loadBookings();
+    });
+
+    // Auto-refresh every 3 seconds to facilitate the 7-second simulation smoothly
+    setInterval(() => {
+      // only refresh if modal not open
+      if (!document.getElementById("payment-modal").classList.contains("is-open")) {
+        loadBookings();
+      }
+    }, 3000);
+
+    document.addEventListener("DOMAndLibsLoaded", loadBookings);
+  </script>
+</body>
+
+</html>
+

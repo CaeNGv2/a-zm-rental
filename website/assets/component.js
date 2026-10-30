@@ -77,8 +77,9 @@ class HtmlComponent extends HTMLElement {
     this.dispatchEvent(new CustomEvent("loaded", {
       detail: { src }
     }));
-    window.dispatchEvent(new CustomEvent("componentLoaded", {
-      detail: { src }
+    document.dispatchEvent(new CustomEvent("componentLoaded", {
+      detail: { src },
+      bubbles: true
     }))
   }
 
