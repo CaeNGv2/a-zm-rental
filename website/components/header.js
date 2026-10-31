@@ -83,9 +83,10 @@ async function updateHeaderUser() {
 }
 
 // Listen when this component loaded
-window.onMounted(() => {
+export function onMounted() {
   renderNavItems();
   updateHeaderUser();
-});
+};
+
 // when auth change
 window.addEventListener("authChange", updateHeaderUser);

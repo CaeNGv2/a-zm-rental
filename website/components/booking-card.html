@@ -16,7 +16,7 @@
     <div style="display: flex; align-items: center; gap: 8px;">
       ${props.statusBadgeHtml}
       ${(props.status === 'upcoming' || props.status === 'ongoing') ? `
-        <button type="button" class="btn-icon action-edit-booking" data-id="${props.bookingId}" title="Edit or Manage Booking" aria-label="Edit booking">
+        <button type="button" id="booking-card-button-edit-${this.uid}" class="btn-icon" data-booking-card-action="edit" data-id="${props.bookingId}" title="Edit or Manage Booking" aria-label="Edit booking">
           <span class="icon-wrap" style="width: 18px; height: 18px;"><html-component src="icons/icon-pencil.html"></html-component></span>
         </button>
       ` : ''}
@@ -43,7 +43,95 @@
     </div>
   </div>
 
-  <!-- Interactive Actions Section -->
-  <!-- ${props.actionSectionHtml} -->
-  <slot></slot>
+  <!-- Action Slot: left = message, right = optional action button.
+       Props: actionMsg (html string), actionBtn (html string, optional).
+       CSS handles mobile stacking — see .booking-card-action-slot in this component. -->
+  ${props.actionMsg ? `
+  <div class="booking-card-action-slot">
+    <span class="booking-card-action-msg ${props.actionMsgClass || ''}">${props.actionMsg}</span>
+    ${props.actionBtnContent ? `<button type="button" class="btn-secondary" id="booking-card-button-action-${this.uid}">${props.actionBtnContent}</button>` : ''}
+  </div>` : ''}
 </div>
+
+<script type="module">
+
+  export function onMounted() {
+    if (!(this instanceof Element)) throw new TypeError("not an el.");
+
+    const editBtn = document.getElementById(`booking-card-button-edit-${this.uid}`);
+    if (editBtn) {
+      editBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        this.dispatchEvent(new CustomEvent("editTrigger", {
+          bubbles: false,
+        }));
+      });
+    }
+
+    if (this.props.actionBtnContent) {
+      const actionBtn = document.getElementById(`booking-card-button-action-${this.uid}`);
+      if (!actionBtn) { console.error(`no btn ${this.uid}`); return; }
+
+      actionBtn.addEventListener("click", (event) => {
+        //console.log("got action click for", this.uid);
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+
+        event.stopPropagation();
+
+        this.dispatchEvent(new CustomEvent("actionTrigger", {
+          bubbles: false,
+        }));
+      });
+    }
+    
+  }
+</script>
+
+<style>
+  .booking-card-action-slot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-outline);
+  }
+  .booking-card-action-msg {
+    flex: 1;
+    font-size: 13px;
+    color: var(--color-surface-inverse-lower);
+  }
+  .booking-card-action-msg--warning {
+    color: #d97706;
+    font-weight: 500;
+  }
+  .booking-card-action-msg--success {
+    color: var(--color-primary);
+    font-weight: 500;
+  }
+  .booking-card-action-msg--cancelled {
+    color: #dc2626;
+    font-weight: 500;
+  }
+  .booking-card-action-btn {
+    flex-shrink: 0;
+  }
+  .booking-card-action-btn > button {
+    padding-inline: 20px;
+  }
+  @media (max-width: 640px) {
+    .booking-card-action-slot {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .booking-card-action-btn,
+    .booking-card-action-btn > button {
+      width: 100%;
+    }
+    .booking-card-action-btn > button {
+      justify-content: center;
+    }
+  }
+</style>

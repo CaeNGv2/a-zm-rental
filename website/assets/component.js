@@ -1,22 +1,25 @@
 
-/**
- * @type {HtmlComponent|null}
- */
-let currentComponent = null;
-/**
- * Vue style component loaded hook
- * @param {Function} fn called after component is loaded
- */
-window.onMounted = (fn) => {
-  if (currentComponent) {
-    currentComponent.addEventListener("loaded", () => fn.call(currentComponent, currentComponent), { once: true });
-  } else {
-    console.warn("onMounted() must be called during component init");
-  }
-};
+// /**
+//  * @type {HtmlComponent|null}
+//  */
+// let currentComponent = null;
+// /**
+//  * Vue style component loaded hook
+//  * @param {Function} fn called after component is loaded
+//  * @deprecated it doesnt work if multiple component in a page with scripts
+//  */
+// window.onMounted = (fn) => {
+//   if (currentComponent) {
+//     currentComponent.addEventListener("loaded", () => fn.call(currentComponent, currentComponent), { once: true });
+//   } else {
+//     console.warn("onMounted() must be called during component init");
+//   }
+// };
 
 class HtmlComponent extends HTMLElement {
+  static #globalComponentCounter = 0;
   #props = {};
+  #uid = `cmp_${++HtmlComponent.#globalComponentCounter}`;
 
   // Getter and setter to allow passing objects by reference via JS
   get props() {
@@ -29,6 +32,13 @@ class HtmlComponent extends HTMLElement {
     if (this.isConnected) {
       this.connectedCallback();
     }
+  }
+
+  /**
+   * get a unique id for this html component which you can use to join with existing ids inside component
+   */
+  get uid() {
+    return this.#uid;
   }
 
   addAttrsToProps() {
@@ -95,6 +105,36 @@ class HtmlComponent extends HTMLElement {
   }
 
   /**
+   * Helper to render template strings while ignoring script tags.
+   * following objects are passed to component instance:
+   * - props
+   * - this
+   * @param {string} html 
+   * @param {Object} props 
+   * @returns {string}
+   */
+  #renderTemplateExcludingScripts(html, props) {
+    // Regex matching <script ...> ... </script> blocks safely (case-insensitive, multiline)
+    const scriptRegex = /(<script\b[^>]*>[\s\S]*?<\/script>)/gi;
+    const parts = html.split(scriptRegex);
+
+    return parts.map((part) => {
+      // If this chunk starts with a script tag, leave it completely untouched!
+      if (/^<script\b/i.test(part)) {
+        return part;
+      }
+      // Otherwise, evaluate template expressions `${...}` normally
+      try {
+        const renderFn = new Function('props', `return \`${part}\`;`);
+        return renderFn.bind(this)(props);
+      } catch (e) {
+        console.error("Template rendering error in chunk:", e);
+        return part;
+      }
+    }).join('');
+  }
+
+  /**
    * 
    * @param {string} src 
    */
@@ -107,13 +147,7 @@ class HtmlComponent extends HTMLElement {
 
     // Evaluate template expressions using the component's props context
     // support strings like `${'★'.repeat(props.stars)}`
-    try {
-      // pass props to component template
-      const renderFn = new Function('props', `return \`${html}\`;`);
-      html = renderFn(this.#props);
-    } catch (e) {
-      console.error("Template rendering error in component:", src, e);
-    }
+    html = this.#renderTemplateExcludingScripts(html, this.#props);
 
     // save existing custom child nodes to append back later
     const customChildren = Array.from(this.childNodes);
@@ -147,30 +181,37 @@ class HtmlComponent extends HTMLElement {
 
     for (const existingScript of componentScripts) {
       const srcAttr = existingScript.getAttribute("src");
-      currentComponent = this;
+      //currentComponent = this;
 
       if (srcAttr) {
         try {
           const scriptUrl = new URL(srcAttr, contextDir).href;
           const mod = await import(scriptUrl);
 
-          // if (typeof mod.onMounted === "function") {
-          //   this.addEventListener("loaded", () => mod.onMounted.call(this, this), { once: true });
-          // }
+          if (typeof mod.onMounted === "function") {
+            this.addEventListener("loaded", () => mod.onMounted.call(this, this), { once: true });
+          }
         } catch (e) {
           console.error("Error loading component module:", srcAttr, e);
         } finally {
-          currentComponent = null;
+          // if (currentComponent === this)
+          //   currentComponent = null;
         }
       } else {
         try {
-          // execute the existingScript.textContent
-          const handler = new Function(existingScript.textContent);
-          handler.call(window);
+          // // execute the existingScript.textContent
+          // const handler = new Function(existingScript.textContent);
+          // handler.call(window);
+          const encodedSnippet = `data:text/javascript;base64,${btoa(existingScript.textContent)}`;
+          const mod = await import(encodedSnippet);
+          if (typeof mod.onMounted === "function") {
+            this.addEventListener("loaded", () => mod.onMounted.call(this, this), { once: true });
+          }
         } catch (err) {
           console.error("Error executing inline component script:", err);
         } finally {
-          currentComponent = null;
+          // if (currentComponent === this)
+          //   currentComponent = null;
         }
       }
 

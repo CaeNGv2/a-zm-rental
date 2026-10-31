@@ -257,16 +257,6 @@
         }
       }
 
-      // Action slot HTML helper
-      // Produces a standard .action-slot div with left message and optional right button.
-      function renderActionSlot(msgHtml, btnHtml = "") {
-        return `
-          <div class="action-slot">
-            <span class="action-slot-msg">${msgHtml}</span>
-            ${btnHtml ? `<span class="action-slot-btn">${btnHtml}</span>` : ""}
-          </div>`;
-      }
-
       // reactive upd of filter tab counters
       State.watchEffect(() => {
         const all = allBookingsState.value;
@@ -334,33 +324,54 @@
 
         container.innerHTML = "";
         bookings.forEach((b) => {
-          // Build the per-status action slot
-          let actionSlotHtml = "";
+          // Determine per-status action slot content (msg + optional button)
+          let actionMsg = "";
+          let actionMsgClass = "";
+          let actionBtnContent = "";
+          /** @type {Function} */
+          let actionFn;
 
           if (b.status === "ongoing") {
-            actionSlotHtml = renderActionSlot(
-              "Returning vehicle? Click to initiate staff checkout &amp; inspection.",
-              `<button type="button" class="btn-secondary action-confirm-return" data-id="${b.bookingId}" style="padding-inline: 20px;">Confirm Return</button>`
-            );
+            actionMsg = "Returning vehicle? Click to initiate staff checkout &amp; inspection.";
+            actionBtnContent = `Confirm Return`;
+            actionFn = () => {
+              // Confirm Return -> open checklist modal
+              pendingReturnBookingId = b.bookingId;
+              // reset checklist
+              document.querySelectorAll("#return-modal .check-item").forEach((c) => (c.checked = false));
+              document.getElementById("return-checklist-error").style.display = "none";
+              document.getElementById("return-modal").classList.add("is-open");
+            };
           } else if (b.status === "pending staff checks") {
-            actionSlotHtml = renderActionSlot(
-              `<span style="color: #d97706; font-weight: 500;">⏳ Vehicle is currently undergoing staff checks. System will verify and transition to payment within a few seconds...</span>`
-            );
+            actionMsg = "⏳ Vehicle is currently undergoing staff checks. System will verify and transition to payment within a few seconds...";
+            actionMsgClass = "booking-card-action-msg--warning";
+            actionFn = () => {
+              document.querySelectorAll("#return-modal .check-item").forEach((c) => (c.checked = false));
+              document.getElementById("return-checklist-error").style.display = "none";
+              document.getElementById("return-modal").classList.add("is-open");
+            };
           } else if (b.status === "pending payment") {
-            actionSlotHtml = renderActionSlot(
-              "Inspection passed with $0 damages. Click to review line items and complete payment.",
-              `<button type="button" class="btn-secondary bookings-js-action-pay" data-id="${b.bookingId}">
-                 <span><small>Make Payment</small><br><b>$${b.totalAmount} SGD</b></span>
-               </button>`
-            );
+            actionMsg = "Inspection passed with $0 damages. Click to review line items and complete payment.";
+            actionBtnContent = `<span><small>Make Payment</small><br><b>$${b.totalAmount} SGD</b></span>`;
+            actionFn = () => {
+              activeBookingToPay = b;
+              document.getElementById("bill-ref").textContent = b.bookingId;
+              document.getElementById("bill-model").textContent = b.modelName;
+              document.getElementById("bill-plate").textContent = b.carPlate;
+              document.getElementById("bill-rate").textContent = `$${b.dailyRateSGD} / day`;
+              document.getElementById("bill-days").textContent = `${b.rentalDays} days (${b.startDate} to ${b.endDate})`;
+              document.getElementById("bill-subtotal").textContent = `$${b.totalAmount}.00 SGD`;
+              document.getElementById("bill-total").textContent = `$${b.totalAmount}.00 SGD`;
+              document.getElementById("bill-card").textContent = `Visa ending in ${b.cardLast4 || "4242"}`;
+
+              document.getElementById("payment-modal").classList.add("is-open");
+            };
           } else if (b.status === "completed") {
-            actionSlotHtml = renderActionSlot(
-              `<span style="color: var(--color-primary); font-weight: 500;">✓ Rental finalized and payment captured. Thank you for driving with AZoom!</span>`
-            );
+            actionMsg = "✓ Rental finalized and payment captured. Thank you for driving with AZoom!";
+            actionMsgClass = "booking-card-action-msg--success";
           } else if (b.status === "cancelled") {
-            actionSlotHtml = renderActionSlot(
-              `<span style="color: #dc2626; font-weight: 500;">✕ Booking cancelled. Allocated vehicle has been returned to fleet inventory.</span>`
-            );
+            actionMsg = "✕ Booking cancelled. Allocated vehicle has been returned to fleet inventory.";
+            actionMsgClass = "booking-card-action-msg--cancelled";
           }
 
           const card = document.createElement("html-component");
@@ -377,86 +388,31 @@
             totalAmount: b.totalAmount,
             status: b.status,
             statusBadgeHtml: renderStatusBadge(b.status),
-            // actionSectionHtml: actionSectionHtml,
+            actionMsg,
+            actionMsgClass,
+            actionBtnContent,
+            actionBtnContent
           };
-          card.innerHTML = actionSlotHtml;
           container.appendChild(card);
 
-          // Bind interactive event handlers for dynamically rendered cards
-          card.addEventListener("loaded", () =>bindCardActionEvents(bookings));
-        });
+          card.addEventListener("actionTrigger", () => {
+            console.log("got event action click!");
 
-        
-      });
-
-      function bindCardActionEvents(bookings) {
-        // Confirm Return -> open checklist modal
-        document.querySelectorAll(".action-confirm-return").forEach((btn) => {
-          if (btn.dataset.isBinded) return;
-          btn.dataset.isBinded = "true";
-          btn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            pendingReturnBookingId = btn.getAttribute("data-id");
-            // reset checklist
-            document.querySelectorAll("#return-modal .check-item").forEach((c) => (c.checked = false));
-            document.getElementById("return-checklist-error").style.display = "none";
-            document.getElementById("return-modal").classList.add("is-open");
+            actionFn();
           });
-        });
 
-        // Pay Button
-        document.querySelectorAll(".bookings-js-action-pay").forEach((btn) => {
-          if (btn.dataset.isBinded) return;
-          btn.dataset.isBinded = "true";
-          btn.addEventListener("click", (e) => {
-            e.stopPropagation(); // dont trigger other
-
-            const bookingId = btn.getAttribute("data-id");
-            const booking = bookings.find((b) => b.bookingId === bookingId);
-            if (!booking) return;
-
-            activeBookingToPay = booking;
-            document.getElementById("bill-ref").textContent = booking.bookingId;
-            document.getElementById("bill-model").textContent = booking.modelName;
-            document.getElementById("bill-plate").textContent = booking.carPlate;
-            document.getElementById("bill-rate").textContent = `$${booking.dailyRateSGD} / day`;
-            document.getElementById("bill-days").textContent = `${booking.rentalDays} days (${booking.startDate} to ${booking.endDate})`;
-            document.getElementById("bill-subtotal").textContent = `$${booking.totalAmount}.00 SGD`;
-            document.getElementById("bill-total").textContent = `$${booking.totalAmount}.00 SGD`;
-            document.getElementById("bill-card").textContent = `Visa ending in ${booking.cardLast4 || "4242"}`;
-
-            document.getElementById("payment-modal").classList.add("is-open");
-          });
-        });
-
-        // bind edit btn
-        console.log("AaaaaA", document.querySelectorAll(".action-edit-booking"))
-        document.querySelectorAll(".action-edit-booking").forEach((btn) => {
-          if (btn.dataset.isBinded) return;
-          btn.dataset.isBinded = "true";
-          console.log("edit btn bind");
-          btn.addEventListener("click", (e) => {
-            e.stopPropagation(); // dont trigger other
-            //e.preventDefault();
-
-            const bookingId = btn.getAttribute("data-id");
-            const booking = bookings.find((b) => b.bookingId === bookingId);
-            if (!booking) {
-              console.error(`booking ${bookingId} not exists`);
-              return;
-            }
-            console.log("edit", bookingId);
-
-            activeBookingToEdit = booking;
-            document.getElementById("edit-ref").textContent = booking.bookingId;
-            document.getElementById("edit-model-name").textContent = booking.modelName;
-            document.getElementById("edit-plate").textContent = booking.carPlate;
-            document.getElementById("edit-rate").textContent = booking.dailyRateSGD;
+          card.addEventListener("editTrigger", () => {
+              
+            activeBookingToEdit = b;
+            document.getElementById("edit-ref").textContent = b.bookingId;
+            document.getElementById("edit-model-name").textContent = b.modelName;
+            document.getElementById("edit-plate").textContent = b.carPlate;
+            document.getElementById("edit-rate").textContent = b.dailyRateSGD;
 
             const startInput = document.getElementById("edit-start-date");
             const endInput = document.getElementById("edit-end-date");
-            startInput.value = booking.startDate;
-            endInput.value = booking.endDate;
+            startInput.value = b.startDate;
+            endInput.value = b.endDate;
 
             const recalc = () => {
               const s = new Date(startInput.value);
@@ -467,7 +423,7 @@
                 return;
               }
               const diff = Math.max(1, Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)));
-              const total = diff * booking.dailyRateSGD;
+              const total = diff * b.dailyRateSGD;
               document.getElementById("edit-calculated-days").textContent = `${diff} day${diff > 1 ? "s" : ""}`;
               document.getElementById("edit-calculated-total").textContent = `$${total} SGD`;
             };
@@ -476,10 +432,75 @@
             recalc();
 
             document.getElementById("edit-modal").classList.add("is-open");
-            console.log("aaaa")
           });
         });
 
+        
+      });
+
+      document.getElementById("bookings-container").addEventListener("booking-card-action", (event) => {
+        const { action, bookingId } = event.detail;
+        const booking = allBookingsState.value.find((b) => b.bookingId === bookingId);
+        if (!booking) {
+          console.error(`booking ${bookingId} not exists`);
+          return;
+        }
+
+        if (action === "return") {
+          // Confirm Return -> open checklist modal
+          pendingReturnBookingId = bookingId;
+          // reset checklist
+          document.querySelectorAll("#return-modal .check-item").forEach((c) => (c.checked = false));
+          document.getElementById("return-checklist-error").style.display = "none";
+          document.getElementById("return-modal").classList.add("is-open");
+        } else if (action === "pay") {
+          activeBookingToPay = booking;
+          document.getElementById("bill-ref").textContent = booking.bookingId;
+          document.getElementById("bill-model").textContent = booking.modelName;
+          document.getElementById("bill-plate").textContent = booking.carPlate;
+          document.getElementById("bill-rate").textContent = `$${booking.dailyRateSGD} / day`;
+          document.getElementById("bill-days").textContent = `${booking.rentalDays} days (${booking.startDate} to ${booking.endDate})`;
+          document.getElementById("bill-subtotal").textContent = `$${booking.totalAmount}.00 SGD`;
+          document.getElementById("bill-total").textContent = `$${booking.totalAmount}.00 SGD`;
+          document.getElementById("bill-card").textContent = `Visa ending in ${booking.cardLast4 || "4242"}`;
+
+          document.getElementById("payment-modal").classList.add("is-open");
+        } else if (action === "edit") {
+          activeBookingToEdit = booking;
+          document.getElementById("edit-ref").textContent = booking.bookingId;
+          document.getElementById("edit-model-name").textContent = booking.modelName;
+          document.getElementById("edit-plate").textContent = booking.carPlate;
+          document.getElementById("edit-rate").textContent = booking.dailyRateSGD;
+
+          const startInput = document.getElementById("edit-start-date");
+          const endInput = document.getElementById("edit-end-date");
+          startInput.value = booking.startDate;
+          endInput.value = booking.endDate;
+
+          const recalc = () => {
+            const s = new Date(startInput.value);
+            const e = new Date(endInput.value);
+            if (isNaN(s) || isNaN(e) || e < s) {
+              document.getElementById("edit-calculated-days").textContent = "Invalid range";
+              document.getElementById("edit-calculated-total").textContent = "$0 SGD";
+              return;
+            }
+            const diff = Math.max(1, Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)));
+            const total = diff * booking.dailyRateSGD;
+            document.getElementById("edit-calculated-days").textContent = `${diff} day${diff > 1 ? "s" : ""}`;
+            document.getElementById("edit-calculated-total").textContent = `$${total} SGD`;
+          };
+          startInput.onchange = recalc;
+          endInput.onchange = recalc;
+          recalc();
+
+          document.getElementById("edit-modal").classList.add("is-open");
+        } else {
+          console.error(`Unknown booking card action: ${action}`);
+        }
+      });
+
+      function bindStatusTabEvents() {
         // Tab click
         document.querySelectorAll(".status-tab").forEach((tab) => {
           if (tab.dataset.isBinded) return;
@@ -490,6 +511,8 @@
           });
         });
       }
+
+      bindStatusTabEvents();
 
       function switchTab(status) {
         activeTabStatusState.value = status;
