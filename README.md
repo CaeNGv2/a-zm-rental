@@ -1,14 +1,17 @@
 
 
-## ISIT207 ASSG 2
+## IS*T207 ASSG 2
 
-The routine business events of AZoom Car Rental is as follows:   
+Demo prototype of a fictional car rental company for a school assignment.
+
+### Business process
+The routine business events of AZ*om Car Rental is as follows:   
    
-- Customer reserves car – via the AZoom Car Rental website using a credit card 
-- Customer rents car at the AZoom Car Rental office 
+- Customer reserves car – via the AZ*om Car Rental website using a credit card 
+- Customer rents car at the AZ*om Car Rental office 
 - Customer returns car at a designed car park 
-- Employee of AZoom Car Rental inspects the returned car – to ensure no 
-damages     
+- Employee of AZ*om Car Rental inspects the returned car – to ensure no 
+damages
 - Customer pays final bill – cost of rental and including any damages found 
 
 ### Constraints
@@ -34,3 +37,9 @@ Includes creative features like CSS animation, transitions, dark mode, dynamic d
 - Good Screen Walkthrough video presentation and quality of communication 
 - Other creative elements 
 - Fully deployed on a public hosting server (e.g., GitHub Pages, Netlify, Vercel). 
+
+#### Resources / Inspiration / Credits
+
+- [CL Leasing / Car Lite](https://clleasing.com.sg/). Most of the image assets come from them. They allso happen to be the most reliable carsharing company in SG
+- [Penpot](https://penpot.app)
+
