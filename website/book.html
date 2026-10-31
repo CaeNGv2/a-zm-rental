@@ -112,160 +112,165 @@
   </style>
 
   <script type="module">
-    
 
-    document.addEventListener("DOMAndLibsLoaded", () => {
+    function init() {
       const allModelsState = State.ref([]);
-    const filterState = State.ref({
-      search: "",
-      type: "all",
-      gear: "all",
-      avail: "all"
-    });
-
-    // Reactive computation of filtered models
-    const filteredModelsState = State.ref([]);
-
-    State.watchEffect(() => {
-      const models = allModelsState.value;
-      const filters = filterState.value;
-
-      const filtered = models.filter((car) => {
-        // Search query (name or type)
-        if (filters.search) {
-          const q = filters.search.toLowerCase();
-          const matchName = car.name.toLowerCase().includes(q);
-          const matchType = car.type.toLowerCase().includes(q);
-          if (!matchName && !matchType) return false;
-        }
-
-        // Vehicle Type
-        if (filters.type !== "all") {
-          if (!car.type.toLowerCase().includes(filters.type.toLowerCase())) return false;
-        }
-
-        // Gear / Transmission
-        if (filters.gear !== "all") {
-          if (car.gearTypeDesc.toLowerCase() !== filters.gear.toLowerCase()) return false;
-        }
-
-        // Availability
-        if (filters.avail === "available" && !car.isAvail) return false;
-        if (filters.avail === "unavailable" && car.isAvail) return false;
-
-        return true;
-      });
-
-      filteredModelsState.value = filtered;
-    });
-
-    // Reactive Render Effect for the Fleet Grid
-    State.watch([filteredModelsState, allModelsState], () => {
-      const grid = document.getElementById("fleet-grid");
-      const countText = document.getElementById("filter-count-text");
-      if (!grid) return;
-
-      const items = filteredModelsState.value;
-      const total = allModelsState.value.length;
-
-      if (countText) {
-        countText.textContent = `Showing ${items.length} of ${total} models`;
-      }
-
-      if (total === 0) {
-        grid.innerHTML = `
-          <div class="card-box" style="grid-column: 1 / -1; text-align: center; padding: 48px;">
-            <p class="text-standard" style="color: #dc2626;">Failed to load fleet catalog. Please try again.</p>
-          </div>
-        `;
-        return;
-      }
-
-      if (items.length === 0) {
-        grid.innerHTML = `
-          <div class="card-box" style="grid-column: 1 / -1; text-align: center; padding: 48px;">
-            <p class="text-standard text-size-normal16" style="color: var(--color-surface-inverse-lower); margin-bottom: 12px;">
-              No vehicles match the selected filter criteria.
-            </p>
-            <button type="button" class="btn-less" id="btn-clear-match" style="display: inline-block;">Clear Filters</button>
-          </div>
-        `;
-        const clearBtn = document.getElementById("btn-clear-match");
-        if (clearBtn) {
-          clearBtn.onclick = resetFilters;
-        }
-        return;
-      }
-
-      // Clean declarative component injection
-      grid.innerHTML = "";
-      items.forEach((car) => {
-        const cardComponent = document.createElement("html-component");
-        cardComponent.setAttribute("src", "components/fleet-card.html");
-        cardComponent.props = {
-          modelId: car.modelId,
-          name: car.name,
-          type: car.type,
-          imgPath: car.imgPath,
-          gearTypeDesc: car.gearTypeDesc,
-          dailyRateSGD: car.dailyRateSGD,
-          totalQty: car.totalQty,
-          availQty: car.availQty,
-          isAvail: car.isAvail,
-        };
-        grid.appendChild(cardComponent);
-      });
-    });
-
-    function resetFilters() {
-      document.getElementById("filter-search").value = "";
-      document.getElementById("filter-type").value = "all";
-      document.getElementById("filter-gear").value = "all";
-      document.getElementById("filter-avail").value = "all";
-      filterState.value = {
+      const filterState = State.ref({
         search: "",
         type: "all",
         gear: "all",
         avail: "all"
-      };
-    }
+      });
 
-    async function loadFleetCatalog() {
-      try {
-        const fleetData = await window.siteApi.getFleet();
-        allModelsState.value = fleetData.models || [];
-      } catch (err) {
-        console.error("Error loading fleet:", err);
-      }
-    }
+      // Reactive computation of filtered models
+      const filteredModelsState = State.ref([]);
 
-    // Bind Filter inputs to reactive State
-    function setupFilterListeners() {
-      const searchInput = document.getElementById("filter-search");
-      const typeSelect = document.getElementById("filter-type");
-      const gearSelect = document.getElementById("filter-gear");
-      const availSelect = document.getElementById("filter-avail");
-      const resetBtn = document.getElementById("btn-reset-filters");
+      State.watchEffect(() => {
+        const models = allModelsState.value;
+        const filters = filterState.value;
 
-      const syncFilters = () => {
+        const filtered = models.filter((car) => {
+          // Search query (name or type)
+          if (filters.search) {
+            const q = filters.search.toLowerCase();
+            const matchName = car.name.toLowerCase().includes(q);
+            const matchType = car.type.toLowerCase().includes(q);
+            if (!matchName && !matchType) return false;
+          }
+
+          // Vehicle Type
+          if (filters.type !== "all") {
+            if (!car.type.toLowerCase().includes(filters.type.toLowerCase())) return false;
+          }
+
+          // Gear / Transmission
+          if (filters.gear !== "all") {
+            if (car.gearTypeDesc.toLowerCase() !== filters.gear.toLowerCase()) return false;
+          }
+
+          // Availability
+          if (filters.avail === "available" && !car.isAvail) return false;
+          if (filters.avail === "unavailable" && car.isAvail) return false;
+
+          return true;
+        });
+
+        filteredModelsState.value = filtered;
+      });
+
+      // Reactive Render Effect for the Fleet Grid
+      State.watch([filteredModelsState, allModelsState], () => {
+        const grid = document.getElementById("fleet-grid");
+        const countText = document.getElementById("filter-count-text");
+        if (!grid) return;
+
+        const items = filteredModelsState.value;
+        const total = allModelsState.value.length;
+
+        if (countText) {
+          countText.textContent = `Showing ${items.length} of ${total} models`;
+        }
+
+        if (total === 0) {
+          grid.innerHTML = `
+            <div class="card-box" style="grid-column: 1 / -1; text-align: center; padding: 48px;">
+              <p class="text-standard" style="color: #dc2626;">Failed to load fleet catalog. Please try again.</p>
+            </div>
+          `;
+          return;
+        }
+
+        if (items.length === 0) {
+          grid.innerHTML = `
+            <div class="card-box" style="grid-column: 1 / -1; text-align: center; padding: 48px;">
+              <p class="text-standard text-size-normal16" style="color: var(--color-surface-inverse-lower); margin-bottom: 12px;">
+                No vehicles match the selected filter criteria.
+              </p>
+              <button type="button" class="btn-less" id="btn-clear-match" style="display: inline-block;">Clear Filters</button>
+            </div>
+          `;
+          const clearBtn = document.getElementById("btn-clear-match");
+          if (clearBtn) {
+            clearBtn.onclick = resetFilters;
+          }
+          return;
+        }
+
+        // Clean declarative component injection
+        grid.innerHTML = "";
+        items.forEach((car) => {
+          const cardComponent = document.createElement("html-component");
+          cardComponent.setAttribute("src", "components/fleet-card.html");
+          cardComponent.props = {
+            modelId: car.modelId,
+            name: car.name,
+            type: car.type,
+            imgPath: car.imgPath,
+            gearTypeDesc: car.gearTypeDesc,
+            dailyRateSGD: car.dailyRateSGD,
+            totalQty: car.totalQty,
+            availQty: car.availQty,
+            isAvail: car.isAvail,
+          };
+          grid.appendChild(cardComponent);
+        });
+      });
+
+      function resetFilters() {
+        document.getElementById("filter-search").value = "";
+        document.getElementById("filter-type").value = "all";
+        document.getElementById("filter-gear").value = "all";
+        document.getElementById("filter-avail").value = "all";
         filterState.value = {
-          search: searchInput.value.trim(),
-          type: typeSelect.value,
-          gear: gearSelect.value,
-          avail: availSelect.value
+          search: "",
+          type: "all",
+          gear: "all",
+          avail: "all"
         };
-      };
+      }
 
-      searchInput.addEventListener("input", syncFilters);
-      typeSelect.addEventListener("change", syncFilters);
-      gearSelect.addEventListener("change", syncFilters);
-      availSelect.addEventListener("change", syncFilters);
-      resetBtn.addEventListener("click", resetFilters);
-    }
+      async function loadFleetCatalog() {
+        try {
+          const fleetData = await window.siteApi.getFleet();
+          allModelsState.value = fleetData.models || [];
+        } catch (err) {
+          console.error("Error loading fleet:", err);
+        }
+      }
+
+      // Bind Filter inputs to reactive State
+      function setupFilterListeners() {
+        const searchInput = document.getElementById("filter-search");
+        const typeSelect = document.getElementById("filter-type");
+        const gearSelect = document.getElementById("filter-gear");
+        const availSelect = document.getElementById("filter-avail");
+        const resetBtn = document.getElementById("btn-reset-filters");
+
+        const syncFilters = () => {
+          filterState.value = {
+            search: searchInput.value.trim(),
+            type: typeSelect.value,
+            gear: gearSelect.value,
+            avail: availSelect.value
+          };
+        };
+
+        searchInput.addEventListener("input", syncFilters);
+        typeSelect.addEventListener("change", syncFilters);
+        gearSelect.addEventListener("change", syncFilters);
+        availSelect.addEventListener("change", syncFilters);
+        resetBtn.addEventListener("click", resetFilters);
+      }
     
       setupFilterListeners();
       loadFleetCatalog();
-    });
+    }
+
+    if (document.isDOMAndLibsReady) {
+      init();
+    } else {
+      document.addEventListener("DOMAndLibsLoaded", init);
+    }
   </script>
 </body>
 

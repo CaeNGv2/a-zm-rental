@@ -14,3 +14,10 @@ declare interface Window {
    */
   onMounted: (fn: Function) => void;
 }
+
+declare interface Document {
+  /**
+   * if not `true`, listen for ready event via event DOMAndLibsLoaded.
+   */
+  isDOMAndLibsReady: true|undefined;
+}

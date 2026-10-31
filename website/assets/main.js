@@ -36,8 +36,9 @@
     domLoadedHandler(); // load straught away
   }
 
-  // site should listen to this event rather than DOMContentLoaded, when libs have been loaded
+  // site should listen to this event rather than DOMContentLoaded, when async libs have been loaded
   document.dispatchEvent(new CustomEvent("DOMAndLibsLoaded", { bubbles: true }));
+  document.isDOMAndLibsReady = true;
 
   // loaded component may require programatic binds
   window.addEventListener("componentLoaded", (src) => {

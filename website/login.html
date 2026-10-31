@@ -111,7 +111,7 @@
   </footer>
 
   <script type="module">
-    document.addEventListener("DOMAndLibsLoaded", () => {
+    function init() {
       const loginForm = document.getElementById("login-form");
       const userIdInput = document.getElementById("login-user-id");
       const quickSelect = document.getElementById("quick-accounts");
@@ -177,7 +177,13 @@
         userIdInput.value = "";
         quickSelect.value = "";
       });
-    });
+    }
+
+    if (document.isDOMAndLibsReady) {
+      init();
+    } else {
+      document.addEventListener("DOMAndLibsLoaded", init);
+    }
   </script>
 </body>
 

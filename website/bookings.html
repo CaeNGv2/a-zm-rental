@@ -228,7 +228,7 @@
   <script type="module">
     
 
-    document.addEventListener("DOMAndLibsLoaded", () => {
+    function init() {
       // Reactive State Variables
       const allBookingsState = State.ref([]);
       const activeTabStatusState = State.ref("all");
@@ -665,7 +665,13 @@
 
       // logout then booking blank
       window.addEventListener("authChange", loadBookings);
-    });
+    }
+
+    if (document.isDOMAndLibsReady) {
+      init();
+    } else {
+      document.addEventListener("DOMAndLibsLoaded", init);
+    }
   </script>
 </body>
 

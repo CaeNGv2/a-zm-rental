@@ -467,14 +467,20 @@
         }
       }
 
-      document.addEventListener("DOMAndLibsLoaded", () => {
+      function init() {
         if (!window.siteApi.getCurrentUserId()) {
           console.error("not authenticated, redirecting");
           window.location.href = "login.html";
           return;
         }
         initReservation();
-      });
+      }
+
+      if (isDOMAndLibsReady) {
+        init();
+      } else {
+        document.addEventListener("DOMAndLibsLoaded", init);
+      }
     </script>
   </body>
 </html>
