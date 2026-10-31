@@ -101,7 +101,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn-less" id="btn-dismiss-edit">Dismiss</button>
-          <button type="submit" class="btn-secondary" style="padding-inline: 20px;">Save Schedule Changes</button>
+          <button type="submit" class="btn-secondary" style="padding-inline: 20px;">Save Changes</button>
         </div>
       </form>
     </div>
@@ -285,7 +285,19 @@
       });
 
       // Reactive update of filtered items using booking-card component
-      State.watchEffect(() => {
+      State.watch([filteredBookingsState, allBookingsState], () => {
+        /**
+         * @type { {eventTarget: EventTarget, eventName: string, handlerRef: Function}[] }
+         */
+        const cleanUpHandlers = [];
+        /**
+         * @type (eventTarget: EventTarget, eventName: string, handler: Function) => any
+         */
+        const addEventListenerWithCleanup = (eventTarget, eventName, handler) => {
+          eventTarget.addEventListener(eventName, handler);
+          cleanUpHandlers.push({eventTarget, eventName, handlerRef: handler});
+        }
+
         const container = document.getElementById("bookings-container");
         if (!container) return;
 
@@ -395,14 +407,12 @@
           };
           container.appendChild(card);
 
-          card.addEventListener("actionTrigger", () => {
+          addEventListenerWithCleanup(card, "actionTrigger", () => {
             console.log("got event action click!");
-
             actionFn();
           });
 
-          card.addEventListener("editTrigger", () => {
-              
+          addEventListenerWithCleanup(card, "editTrigger", () => {
             activeBookingToEdit = b;
             document.getElementById("edit-ref").textContent = b.bookingId;
             document.getElementById("edit-model-name").textContent = b.modelName;
@@ -413,6 +423,12 @@
             const endInput = document.getElementById("edit-end-date");
             startInput.value = b.startDate;
             endInput.value = b.endDate;
+
+            // disallow bad range
+            endInput.min = startInput.value;
+            if (endInput.value < startInput.value) {
+              endInput.value = startInput.value;
+            }
 
             const recalc = () => {
               const s = new Date(startInput.value);
@@ -433,9 +449,16 @@
 
             document.getElementById("edit-modal").classList.add("is-open");
           });
+
         });
 
-        
+        return () => {
+          // clean handler
+          for (let c of cleanUpHandlers) {
+            c.eventTarget.removeEventListener(c.eventName, c.handlerRef);
+          }
+          console.log("clean up!");
+        };
       });
 
       document.getElementById("bookings-container").addEventListener("booking-card-action", (event) => {
@@ -585,7 +608,7 @@
 
         // Edit modal
         const closeEdit = () => document.getElementById("edit-modal").classList.remove("is-open");
-        document.getElementById("btn-close-edit").onclick  = closeEdit;
+        document.getElementById("btn-close-edit").onclick = closeEdit;
         document.getElementById("btn-dismiss-edit").onclick = closeEdit;
 
         

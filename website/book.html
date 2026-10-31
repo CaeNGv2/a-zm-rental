@@ -160,7 +160,7 @@
     });
 
     // Reactive Render Effect for the Fleet Grid
-    State.watchEffect(() => {
+    State.watch([filteredModelsState, allModelsState], () => {
       const grid = document.getElementById("fleet-grid");
       const countText = document.getElementById("filter-count-text");
       if (!grid) return;
