@@ -476,7 +476,7 @@
         initReservation();
       }
 
-      if (isDOMAndLibsReady) {
+      if (document.isDOMAndLibsReady) {
         init();
       } else {
         document.addEventListener("DOMAndLibsLoaded", init);
