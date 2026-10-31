@@ -56,15 +56,24 @@ class ServerApi {
   }
 
   /**
-   * @param {string} startDateStr
-   * @param {string} endDateStr 
+   * @param {string} startDate
+   * @param {string} endDate
    * @returns "upcoming" | "ongoing"
    */
-  statusFromDateRange(startDateStr, endDateStr) {
-    const now = new Date();
-    const todayStr = now.toISOString().split("T")[0];
+  statusFromDateRange(startDate, endDate) {
+    const sgTodayDate = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Singapore',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date()); // en-Ca can give YYYY-MM-DD, which is what we need
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const today = new Date(sgTodayDate);
+
     let status = "upcoming";
-    if (startDateStr <= todayStr && endDateStr >= todayStr) {
+    if (start <= today && end >= today) {
       status = "ongoing";
     }
     return status;
@@ -245,7 +254,6 @@ class ServerApi {
       booking.rentalDays = rentalDays;
       booking.totalAmount = rentalDays * booking.dailyRateSGD;
 
-      const now = new Date();
       // if (booking.status === "upcoming") {
       booking.status = this.statusFromDateRange(booking.startDate, booking.endDate);
       //}
