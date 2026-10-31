@@ -195,8 +195,7 @@
                     align-items: center;
                     justify-content: center;
                     gap: 8px;
-                    padding: 12px;
-                    border-style: dashed;
+                    outline-style: dashed;
                   "
                 >
                   <span class="icon-wrap" style="width: 18px; height: 18px;"><html-component src="components/icons/icon-plus.html"></html-component></span>
@@ -208,10 +207,10 @@
               <button
                 type="submit"
                 id="btn-confirm-booking"
-                class="btn-primary btn-bigger"
-                style="width: 100%; font-size: 16px; font-weight: 600"
+                class="btn-primary"
+                style="width: 100%;"
               >
-                Confirm Booking &amp; Reserve Vehicle
+                Confirm Booking
               </button>
             </form>
           </div>
@@ -429,13 +428,15 @@
 
           // "+ Add New Card" click handler
           document.getElementById("btn-add-card").addEventListener("click", () => {
-            const note = document.getElementById("add-card-note");
-            note.style.display = note.style.display === "none" ? "block" : "none";
+            // const note = document.getElementById("add-card-note");
+            // note.style.display = note.style.display === "none" ? "block" : "none";
+            alert("Not able to add new card yet.")
           });
 
           // Form Submit
           document.getElementById("reservation-form").addEventListener("submit", async (e) => {
             e.preventDefault();
+            if (!confirm(`Are you sure you want to confirm the booking?`)) return;
             const btn = document.getElementById("btn-confirm-booking");
             btn.disabled = true;
             btn.textContent = "Processing reservation...";
@@ -458,7 +459,7 @@
             } catch (err) {
               alert(err.message || "Failed to make reservation");
               btn.disabled = false;
-              btn.textContent = "Confirm Booking & Reserve Vehicle";
+              btn.textContent = "Confirm Booking";
             }
           });
         } catch (err) {

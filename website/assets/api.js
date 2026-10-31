@@ -56,6 +56,21 @@ class ServerApi {
   }
 
   /**
+   * @param {string} startDateStr
+   * @param {string} endDateStr 
+   * @returns "upcoming" | "ongoing"
+   */
+  statusFromDateRange(startDateStr, endDateStr) {
+    const now = new Date();
+    const todayStr = now.toISOString().split("T")[0];
+    let status = "upcoming";
+    if (startDateStr <= todayStr && endDateStr >= todayStr) {
+      status = "ongoing";
+    }
+    return status;
+  }
+
+  /**
    * Create a new booking
    * @param {Object} bookingData
    */
@@ -85,12 +100,7 @@ class ServerApi {
     const totalAmount = rentalDays * model.dailyRateSGD;
 
     // Determine initial status based on dates
-    const now = new Date();
-    const todayStr = now.toISOString().split("T")[0];
-    let initialStatus = "upcoming";
-    if (startDate <= todayStr && endDate >= todayStr) {
-      initialStatus = "ongoing";
-    }
+    const initialStatus = this.statusFromDateRange(startDate, endDate);
 
     const newBooking = {
       bookingId: "BK-" + Date.now().toString(36).toUpperCase(),
@@ -130,17 +140,22 @@ class ServerApi {
 
     const now = Date.now();
     let updated = false;
-
-    // Server simulation:
-    // If status is 'pending staff checks' and >= 7 seconds elapsed since confirmReturnAt,
-    // update status to 'pending payment'
+    
     bookings = bookings.map((b) => {
+      // Server simulation:
+      // If status is 'pending staff checks' and >= 7 seconds elapsed since confirmReturnAt,
+      // update status to 'pending payment'
       if (b.status === "pending staff checks" && b.confirmReturnAt) {
         const elapsedSeconds = (now - new Date(b.confirmReturnAt).getTime()) / 1000;
         if (elapsedSeconds >= 7) {
           b.status = "pending payment";
           updated = true;
         }
+      }
+      // update upcoming to ongoing if the date is here
+      if (b.status === "upcoming") {
+        b.status = this.statusFromDateRange(b.startDate, b.endDate);
+        updated = true;
       }
       return b;
     });
@@ -222,10 +237,9 @@ class ServerApi {
       booking.totalAmount = rentalDays * booking.dailyRateSGD;
 
       const now = new Date();
-      const todayStr = now.toISOString().split("T")[0];
-      if (booking.status === "upcoming" && updates.startDate <= todayStr && updates.endDate >= todayStr) {
-        booking.status = "ongoing";
-      }
+      // if (booking.status === "upcoming") {
+      booking.status = this.statusFromDateRange(booking.startDate, booking.endDate);
+      //}
     }
 
     if (updates.cardLast4) {

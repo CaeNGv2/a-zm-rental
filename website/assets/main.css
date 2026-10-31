@@ -205,8 +205,8 @@ body {
 .btn-secondary,
 .btn-less {
   display: flex;
-  padding-block: 6px;
-  padding-inline: 6px;
+  padding-block: 8px;
+  padding-inline: 14px;
   border-radius: 3px;
   justify-content: center;
   align-items: center;
@@ -225,6 +225,20 @@ button.btn-less {
   border: none;
   font: inherit;
 }
+button.btn-raw.text-size-smaller,
+button.btn-less.text-size-smaller {
+  font-size: smaller;
+}
+/* @media (width <= 640px) {
+  .btn-raw,
+  .btn-primary,
+  .btn-secondary,
+  .btn-less {
+
+    padding-block: 6px;
+    padding-inline: 6px;
+  }
+} */
 
 .btn-raw:hover, .btn-less:hover {
   background-color: var(--color-container-highest);
@@ -449,16 +463,21 @@ button.btn-less {
 
 /* Bill / Key-Value Line Items */
 .bill-line-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: max-content 1fr; /* Lets the left column expand to its content width */
+  gap: 12px; /* Adds space between columns */
   justify-content: space-between;
   align-items: center;
   padding-block: 8px;
   border-bottom: 1px dashed var(--color-outline);
   font-size: 14px;
 }
-
 .bill-line-item:last-child {
   border-bottom: none;
+}
+
+.bill-line-item *:last-of-type {
+  justify-self: end; 
 }
 
 .bill-total-row {

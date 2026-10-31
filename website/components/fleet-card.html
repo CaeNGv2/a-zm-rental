@@ -1,4 +1,4 @@
-<div class="card-box card-box-hover" style="display: flex; flex-direction: column; justify-content: space-between;">
+<div class="card-box card-box-hover" style="display: flex; flex-direction: column; justify-content: space-between; height: stretch">
   <div>
     <!-- Car Image Showcase -->
     <div style="width: 100%; aspect-ratio: 16 / 10; border-radius: 8px; overflow: hidden; background-color: var(--color-container); margin-bottom: 16px; display: flex; align-items: center; justify-content: center; position: relative;">
@@ -44,8 +44,8 @@
       <span style="font-size: 13px; color: var(--color-surface-inverse-lower);"> / day</span>
     </div>
     ${props.isAvail
-      ? `<a href="reservation.html?modelId=${encodeURIComponent(props.modelId)}" class="btn-primary" style="flex: 1; padding-block: 10px;">Book Now</a>`
-      : `<button type="button" class="btn-raw" style="flex: 1; padding-block: 10px; background-color: var(--color-container); color: var(--color-surface-inverse-lower); cursor: not-allowed;" disabled>Unavailable</button>`}
+      ? `<a href="reservation.html?modelId=${encodeURIComponent(props.modelId)}" class="btn-secondary" style="padding-inline: 20px;">Select</a>`
+      : `<button type="button" class="btn-raw" style="padding-inline: 20px; background-color: var(--color-container); color: var(--color-surface-inverse-lower); cursor: not-allowed;" disabled>Unavailable</button>`}
   </div>
 </div>
 

@@ -34,13 +34,13 @@
 
       <!-- Interactive status filter tabs-->
       <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--color-outline); padding-bottom: 12px;" id="status-filter-tabs">
-        <button type="button" class="btn-raw status-tab active" data-status="all" style="font-weight: 600; padding: 8px 16px; border-radius: 20px;">All Bookings (<span id="count-all">0</span>)</button>
-        <button type="button" class="btn-raw status-tab" data-status="upcoming" style="padding: 8px 16px; border-radius: 20px;">Upcoming (<span id="count-upcoming">0</span>)</button>
-        <button type="button" class="btn-raw status-tab" data-status="ongoing" style="padding: 8px 16px; border-radius: 20px;">Ongoing (<span id="count-ongoing">0</span>)</button>
-        <button type="button" class="btn-raw status-tab" data-status="pending staff checks" style="padding: 8px 16px; border-radius: 20px;">Pending Checks (<span id="count-checks">0</span>)</button>
-        <button type="button" class="btn-raw status-tab" data-status="pending payment" style="padding: 8px 16px; border-radius: 20px;">Pending Payment (<span id="count-payment">0</span>)</button>
-        <button type="button" class="btn-raw status-tab" data-status="completed" style="padding: 8px 16px; border-radius: 20px;">Completed (<span id="count-completed">0</span>)</button>
-        <button type="button" class="btn-raw status-tab" data-status="cancelled" style="padding: 8px 16px; border-radius: 20px;">Cancelled (<span id="count-cancelled">0</span>)</button>
+        <button type="button" class="btn-raw text-size-smaller status-tab active" data-status="all" style="font-weight: 600; padding: 8px 16px; border-radius: 20px;">All Bookings (<span id="count-all">0</span>)</button>
+        <button type="button" class="btn-raw text-size-smaller status-tab" data-status="upcoming" style="padding: 8px 16px; border-radius: 20px;">Upcoming (<span id="count-upcoming">0</span>)</button>
+        <button type="button" class="btn-raw text-size-smaller status-tab" data-status="ongoing" style="padding: 8px 16px; border-radius: 20px;">Ongoing (<span id="count-ongoing">0</span>)</button>
+        <button type="button" class="btn-raw text-size-smaller status-tab" data-status="pending staff checks" style="padding: 8px 16px; border-radius: 20px;">Pending Checks (<span id="count-checks">0</span>)</button>
+        <button type="button" class="btn-raw text-size-smaller status-tab" data-status="pending payment" style="padding: 8px 16px; border-radius: 20px;">Pending Payment (<span id="count-payment">0</span>)</button>
+        <button type="button" class="btn-raw text-size-smaller status-tab" data-status="completed" style="padding: 8px 16px; border-radius: 20px;">Completed (<span id="count-completed">0</span>)</button>
+        <button type="button" class="btn-raw text-size-smaller status-tab" data-status="cancelled" style="padding: 8px 16px; border-radius: 20px;">Cancelled (<span id="count-cancelled">0</span>)</button>
       </div>
 
       <!-- inject via booking-card component -->
@@ -101,7 +101,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn-less" id="btn-dismiss-edit">Dismiss</button>
-          <button type="submit" class="btn-primary" style="padding-inline: 20px;">Save Schedule Changes</button>
+          <button type="submit" class="btn-secondary" style="padding-inline: 20px;">Save Schedule Changes</button>
         </div>
       </form>
     </div>
@@ -164,7 +164,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn-less" id="btn-cancel-pay">Close</button>
-        <button type="button" class="btn-primary" id="btn-execute-pay" style="padding-inline: 24px;">Confirm &amp; Pay</button>
+        <button type="button" class="btn-secondary" id="btn-execute-pay" style="padding-inline: 24px;">Confirm &amp; Pay</button>
       </div>
     </div>
   </div>
@@ -313,8 +313,8 @@
               <span style="font-size: 13px; color: var(--color-surface-inverse-lower);">
                 Inspection passed with $0 damages. Click to review line items and complete payment.
               </span>
-              <button type="button" class="btn-secondary btn-bigger action-pay" data-id="${b.bookingId}" style="gap: 20px">
-                <span>Pay <b>$${b.totalAmount} SGD</b></span>
+              <button type="button" class="btn-secondary bookings-js-action-pay" data-id="${b.bookingId}" style="gap: 20px">
+                <span><small>Make Payment</small><br><b>$${b.totalAmount} SGD</b></span>
               </button>
             </div>
           `;
@@ -378,7 +378,7 @@
         });
 
         // Pay Button
-        document.querySelectorAll(".action-pay").forEach((btn) => {
+        document.querySelectorAll(".bookings-js-action-pay").forEach((btn) => {
           btn.addEventListener("click", (e) => {
             e.stopPropagation(); // dont trigger other
 
