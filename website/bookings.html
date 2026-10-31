@@ -424,11 +424,15 @@
             startInput.value = b.startDate;
             endInput.value = b.endDate;
 
-            // disallow bad range
-            endInput.min = startInput.value;
-            if (endInput.value < startInput.value) {
-              endInput.value = startInput.value;
-            }
+            const dateSync = () => {
+              // disallow bad range
+              endInput.min = startInput.value;
+              if (endInput.value < startInput.value) {
+                endInput.value = startInput.value;
+              }
+            };
+            dateSync();
+            addEventListenerWithCleanup(startInput, "change", dateSync);
 
             const recalc = () => {
               const s = new Date(startInput.value);
