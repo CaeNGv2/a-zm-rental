@@ -285,7 +285,7 @@
       });
 
       // Reactive update of filtered items using booking-card component
-      State.watch([filteredBookingsState, allBookingsState], () => {
+      State.watch([filteredBookingsState/*, allBookingsState*/], () => {
         /**
          * @type { {eventTarget: EventTarget, eventName: string, handlerRef: Function}[] }
          */
@@ -302,7 +302,7 @@
         if (!container) return;
 
         const bookings = filteredBookingsState.value;
-        const total = allBookingsState.value.length;
+        const total = allBookingsState.getValueUntracked().length;
 
         if (total === 0) {
           container.innerHTML = `

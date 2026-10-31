@@ -70,7 +70,7 @@
 
     if (this.props.actionBtnContent) {
       const actionBtn = document.getElementById(`booking-card-button-action-${this.uid}`);
-      if (!actionBtn) { console.error(`no btn ${this.uid}`); return; }
+      if (!actionBtn) { console.error(`no btn ${this.uid} ${this.props.actionBtnContent}`); return; }
 
       actionBtn.addEventListener("click", (event) => {
         //console.log("got action click for", this.uid);
