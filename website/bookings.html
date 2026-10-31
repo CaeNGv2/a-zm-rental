@@ -107,7 +107,52 @@
     </div>
   </div>
 
-  <!-- Payment / Bill Overlay Popup -->
+  <!-- ── return car checklist Modal ── -->
+  <div class="modal-overlay" id="return-modal" aria-modal="true" role="dialog" aria-labelledby="return-modal-title">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 class="text-display" id="return-modal-title" style="font-size: 20px; font-weight: 600;">Confirm Vehicle Return</h3>
+        <button type="button" class="btn-icon" id="btn-close-return" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="text-standard text-size-normal14" style="color: var(--color-surface-inverse-lower);">
+          Please confirm all items below before completing your vehicle return.
+        </p>
+
+        <!-- Checklist -->
+        <div class="card-box" style="background-color: var(--color-container); padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+          <label class="return-check-item" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+            <input type="checkbox" class="check-item" style="margin-top: 3px; accent-color: var(--color-primary); width: 16px; height: 16px; flex-shrink: 0;" />
+            <span style="font-size: 14px;">Car keys are inside the glove box</span>
+          </label>
+          <label class="return-check-item" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+            <input type="checkbox" class="check-item" style="margin-top: 3px; accent-color: var(--color-primary); width: 16px; height: 16px; flex-shrink: 0;" />
+            <span style="font-size: 14px;">Car is parked in the correct location and allocated lot</span>
+          </label>
+          <label class="return-check-item" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+            <input type="checkbox" class="check-item" style="margin-top: 3px; accent-color: var(--color-primary); width: 16px; height: 16px; flex-shrink: 0;" />
+            <span style="font-size: 14px;">Check your belongings have been taken</span>
+          </label>
+          <label class="return-check-item" style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+            <input type="checkbox" class="check-item" style="margin-top: 3px; accent-color: var(--color-primary); width: 16px; height: 16px; flex-shrink: 0;" />
+            <span style="font-size: 14px;">Fuel tank is at least 2/4 full</span>
+          </label>
+        </div>
+
+        <p id="return-checklist-error" style="font-size: 13px; color: #dc2626; display: none;">
+          ⚠ Please tick all items before confirming.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-less" id="btn-cancel-return">Cancel</button>
+        <button type="button" class="btn-secondary" id="btn-submit-return" style="padding-inline: 24px;">Confirm Return</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Payment / Bill Modal ── -->
   <div class="modal-overlay" id="payment-modal">
     <div class="modal-window">
       <div class="modal-header">
@@ -191,6 +236,7 @@
 
       let activeBookingToPay = null;
       let activeBookingToEdit = null;
+      let pendingReturnBookingId = null;
 
       function renderStatusBadge(status) {
         switch (status) {
@@ -211,12 +257,22 @@
         }
       }
 
-      // Reactive Computation: Filter by tab status
+      // Action slot HTML helper
+      // Produces a standard .action-slot div with left message and optional right button.
+      function renderActionSlot(msgHtml, btnHtml = "") {
+        return `
+          <div class="action-slot">
+            <span class="action-slot-msg">${msgHtml}</span>
+            ${btnHtml ? `<span class="action-slot-btn">${btnHtml}</span>` : ""}
+          </div>`;
+      }
+
+      // reactive upd of filter tab counters
       State.watchEffect(() => {
         const all = allBookingsState.value;
         const tab = activeTabStatusState.value;
 
-        // Update Tab Counter badges
+        // count of items per filter type
         const counts = {
           all: all.length,
           upcoming: all.filter((b) => b.status === "upcoming").length,
@@ -226,27 +282,19 @@
           completed: all.filter((b) => b.status === "completed").length,
           cancelled: all.filter((b) => b.status === "cancelled").length,
         };
+        const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = String(v); };
+        set("count-all", counts.all);
+        set("count-upcoming", counts.upcoming);
+        set("count-ongoing", counts.ongoing);
+        set("count-checks", counts.checks);
+        set("count-payment", counts.payment);
+        set("count-completed", counts.completed);
+        set("count-cancelled", counts.cancelled);
 
-        const setBadge = (id, count) => {
-          const el = document.getElementById(id);
-          if (el) el.textContent = String(count);
-        };
-        setBadge("count-all", counts.all);
-        setBadge("count-upcoming", counts.upcoming);
-        setBadge("count-ongoing", counts.ongoing);
-        setBadge("count-checks", counts.checks);
-        setBadge("count-payment", counts.payment);
-        setBadge("count-completed", counts.completed);
-        setBadge("count-cancelled", counts.cancelled);
-
-        if (tab === "all") {
-          filteredBookingsState.value = all;
-        } else {
-          filteredBookingsState.value = all.filter((b) => b.status === tab);
-        }
+        filteredBookingsState.value = tab === "all" ? all : all.filter((b) => b.status === tab);
       });
 
-      // Reactive Renderer for Bookings List using booking-card component
+      // Reactive update of filtered items using booking-card component
       State.watchEffect(() => {
         const container = document.getElementById("bookings-container");
         if (!container) return;
@@ -286,50 +334,33 @@
 
         container.innerHTML = "";
         bookings.forEach((b) => {
-          let actionSectionHtml = "";
+          // Build the per-status action slot
+          let actionSlotHtml = "";
 
           if (b.status === "ongoing") {
-            actionSectionHtml = `
-            <div style="display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--color-outline); justify-content: space-between;">
-              <span style="font-size: 13px; color: var(--color-surface-inverse-lower);">
-                Returning vehicle? Click to initiate staff checkout &amp; inspection.
-              </span>
-              <button type="button" class="btn-secondary action-confirm-return" data-id="${b.bookingId}" style="padding-inline: 20px;">
-                Confirm Return
-              </button>
-            </div>
-          `;
+            actionSlotHtml = renderActionSlot(
+              "Returning vehicle? Click to initiate staff checkout &amp; inspection.",
+              `<button type="button" class="btn-secondary action-confirm-return" data-id="${b.bookingId}" style="padding-inline: 20px;">Confirm Return</button>`
+            );
           } else if (b.status === "pending staff checks") {
-            actionSectionHtml = `
-            <div style="display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--color-outline); background-color: rgba(217, 119, 6, 0.05); padding: 12px 16px; border-radius: 8px;">
-              <span style="font-size: 14px; color: #d97706; font-weight: 500;">
-                ⏳ Vehicle is currently undergoing staff checks. System will verify and transition to payment within 7 seconds...
-              </span>
-            </div>
-          `;
+            actionSlotHtml = renderActionSlot(
+              `<span style="color: #d97706; font-weight: 500;">⏳ Vehicle is currently undergoing staff checks. System will verify and transition to payment within a few seconds...</span>`
+            );
           } else if (b.status === "pending payment") {
-            actionSectionHtml = `
-            <div style="display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--color-outline); justify-content: space-between;">
-              <span style="font-size: 13px; color: var(--color-surface-inverse-lower);">
-                Inspection passed with $0 damages. Click to review line items and complete payment.
-              </span>
-              <button type="button" class="btn-secondary bookings-js-action-pay" data-id="${b.bookingId}" style="gap: 20px">
-                <span><small>Make Payment</small><br><b>$${b.totalAmount} SGD</b></span>
-              </button>
-            </div>
-          `;
+            actionSlotHtml = renderActionSlot(
+              "Inspection passed with $0 damages. Click to review line items and complete payment.",
+              `<button type="button" class="btn-secondary bookings-js-action-pay" data-id="${b.bookingId}">
+                 <span><small>Make Payment</small><br><b>$${b.totalAmount} SGD</b></span>
+               </button>`
+            );
           } else if (b.status === "completed") {
-            actionSectionHtml = `
-            <div style="margin-top: 12px; font-size: 13px; color: var(--color-primary); font-weight: 500;">
-              ✓ Rental finalized and payment captured. Thank you for driving with AZoom!
-            </div>
-          `;
+            actionSlotHtml = renderActionSlot(
+              `<span style="color: var(--color-primary); font-weight: 500;">✓ Rental finalized and payment captured. Thank you for driving with AZoom!</span>`
+            );
           } else if (b.status === "cancelled") {
-            actionSectionHtml = `
-            <div style="margin-top: 12px; font-size: 13px; color: #dc2626; font-weight: 500;">
-              ✕ Booking cancelled. Allocated vehicle has been returned to fleet inventory.
-            </div>
-          `;
+            actionSlotHtml = renderActionSlot(
+              `<span style="color: #dc2626; font-weight: 500;">✕ Booking cancelled. Allocated vehicle has been returned to fleet inventory.</span>`
+            );
           }
 
           const card = document.createElement("html-component");
@@ -348,7 +379,7 @@
             statusBadgeHtml: renderStatusBadge(b.status),
             // actionSectionHtml: actionSectionHtml,
           };
-          card.innerHTML = actionSectionHtml;
+          card.innerHTML = actionSlotHtml;
           container.appendChild(card);
 
           // Bind interactive event handlers for dynamically rendered cards
@@ -359,26 +390,24 @@
       });
 
       function bindCardActionEvents(bookings) {
-        // Confirm Return Button
+        // Confirm Return -> open checklist modal
         document.querySelectorAll(".action-confirm-return").forEach((btn) => {
-          btn.addEventListener("click", async (e) => {
-            e.stopPropagation(); // dont trigger other
-
-            const bookingId = btn.getAttribute("data-id");
-            btn.disabled = true;
-            btn.textContent = "Processing return...";
-            try {
-              await window.siteApi.confirmReturn(bookingId);
-              await loadBookings();
-            } catch (err) {
-              alert(err.message || "Failed to confirm return");
-              await loadBookings();
-            }
+          if (btn.dataset.isBinded) return;
+          btn.dataset.isBinded = "true";
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            pendingReturnBookingId = btn.getAttribute("data-id");
+            // reset checklist
+            document.querySelectorAll("#return-modal .check-item").forEach((c) => (c.checked = false));
+            document.getElementById("return-checklist-error").style.display = "none";
+            document.getElementById("return-modal").classList.add("is-open");
           });
         });
 
         // Pay Button
         document.querySelectorAll(".bookings-js-action-pay").forEach((btn) => {
+          if (btn.dataset.isBinded) return;
+          btn.dataset.isBinded = "true";
           btn.addEventListener("click", (e) => {
             e.stopPropagation(); // dont trigger other
 
@@ -404,9 +433,8 @@
         console.log("AaaaaA", document.querySelectorAll(".action-edit-booking"))
         document.querySelectorAll(".action-edit-booking").forEach((btn) => {
           if (btn.dataset.isBinded) return;
-          btn.dataset.isBinded = true;
+          btn.dataset.isBinded = "true";
           console.log("edit btn bind");
-          
           btn.addEventListener("click", (e) => {
             e.stopPropagation(); // dont trigger other
             //e.preventDefault();
@@ -430,10 +458,10 @@
             startInput.value = booking.startDate;
             endInput.value = booking.endDate;
 
-            const updateEditCalculations = () => {
+            const recalc = () => {
               const s = new Date(startInput.value);
               const e = new Date(endInput.value);
-              if (isNaN(s.getTime()) || isNaN(e.getTime()) || e < s) {
+              if (isNaN(s) || isNaN(e) || e < s) {
                 document.getElementById("edit-calculated-days").textContent = "Invalid range";
                 document.getElementById("edit-calculated-total").textContent = "$0 SGD";
                 return;
@@ -443,13 +471,22 @@
               document.getElementById("edit-calculated-days").textContent = `${diff} day${diff > 1 ? "s" : ""}`;
               document.getElementById("edit-calculated-total").textContent = `$${total} SGD`;
             };
-
-            startInput.onchange = updateEditCalculations;
-            endInput.onchange = updateEditCalculations;
-            updateEditCalculations();
+            startInput.onchange = recalc;
+            endInput.onchange = recalc;
+            recalc();
 
             document.getElementById("edit-modal").classList.add("is-open");
             console.log("aaaa")
+          });
+        });
+
+        // Tab click
+        document.querySelectorAll(".status-tab").forEach((tab) => {
+          if (tab.dataset.isBinded) return;
+          tab.dataset.isBinded = "true";
+          tab.addEventListener("click", (e) => {
+            e.stopPropagation();
+            switchTab(tab.getAttribute("data-status"));
           });
         });
       }
@@ -457,15 +494,15 @@
       function switchTab(status) {
         activeTabStatusState.value = status;
         document.querySelectorAll(".status-tab").forEach((tab) => {
-          if (tab.getAttribute("data-status") === status) {
-            tab.classList.add("active");
-          } else {
-            tab.classList.remove("active");
-          }
+          tab.classList.toggle("active", tab.getAttribute("data-status") === status);
         });
       }
 
       async function loadBookings() {
+        if (!window.siteApi.getCurrentUserId()) {
+          allBookingsState.value = [];
+          return;
+        }
         try {
           const bookings = await window.siteApi.getBookings();
           allBookingsState.value = bookings;
@@ -476,15 +513,36 @@
 
       // Modal Event Listeners
       function setupModalListeners() {
-        // Payment Modal Close
-        document.getElementById("btn-close-modal").onclick = () => {
-          document.getElementById("payment-modal").classList.remove("is-open");
-        };
-        document.getElementById("btn-cancel-pay").onclick = () => {
-          document.getElementById("payment-modal").classList.remove("is-open");
+        // return confirmatio checklist modal
+        const closeReturn = () => document.getElementById("return-modal").classList.remove("is-open");
+        document.getElementById("btn-close-return").onclick  = closeReturn;
+        document.getElementById("btn-cancel-return").onclick = closeReturn;
+        document.getElementById("btn-submit-return").onclick = async () => {
+          const unchecked = [...document.querySelectorAll("#return-modal .check-item")].filter((c) => !c.checked);
+          const errEl = document.getElementById("return-checklist-error");
+          if (unchecked.length) {
+            errEl.style.display = "block";
+            return;
+          }
+          errEl.style.display = "none";
+          const submitBtn = document.getElementById("btn-submit-return");
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Processing...";
+          try {
+            await window.siteApi.confirmReturn(pendingReturnBookingId);
+            closeReturn();
+            await loadBookings();
+          } catch (err) {
+            alert(err.message || "Failed to confirm return");
+          }
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Confirm Return";
         };
 
-        // Confirm & Pay
+        // Payment modal
+        const closePayment = () => document.getElementById("payment-modal").classList.remove("is-open");
+        document.getElementById("btn-close-modal").onclick = closePayment;
+        document.getElementById("btn-cancel-pay").onclick  = closePayment;
         document.getElementById("btn-execute-pay").onclick = async () => {
           if (!activeBookingToPay) return;
           const payBtn = document.getElementById("btn-execute-pay");
@@ -493,26 +551,21 @@
 
           try {
             await window.siteApi.payBooking(activeBookingToPay.bookingId);
-            document.getElementById("payment-modal").classList.remove("is-open");
-            payBtn.disabled = false;
-            payBtn.textContent = "Confirm & Pay";
+            closePayment();
             await loadBookings();
           } catch (err) {
             alert(err.message || "Payment failed");
-            payBtn.disabled = false;
-            payBtn.textContent = "Confirm & Pay";
           }
+          payBtn.disabled = false;
+          payBtn.textContent = "Confirm & Pay";
         };
 
-        // Edit Modal Close
-        document.getElementById("btn-close-edit").onclick = () => {
-          document.getElementById("edit-modal").classList.remove("is-open");
-        };
-        document.getElementById("btn-dismiss-edit").onclick = () => {
-          document.getElementById("edit-modal").classList.remove("is-open");
-        };
+        // Edit modal
+        const closeEdit = () => document.getElementById("edit-modal").classList.remove("is-open");
+        document.getElementById("btn-close-edit").onclick  = closeEdit;
+        document.getElementById("btn-dismiss-edit").onclick = closeEdit;
 
-        // Edit Form Submit
+        
         document.getElementById("edit-booking-form").onsubmit = async (e) => {
           e.preventDefault();
           if (!activeBookingToEdit) return;
@@ -525,37 +578,27 @@
               startDate: newStart,
               endDate: newEnd
             });
-            document.getElementById("edit-modal").classList.remove("is-open");
+            closeEdit();
             await loadBookings();
           } catch (err) {
             alert(err.message || "Failed to update booking schedule");
           }
         };
 
-        // Cancel Booking inside Edit Interface (Killer Feature)
         document.getElementById("btn-cancel-booking-action").onclick = async () => {
           if (!activeBookingToEdit) return;
           if (!confirm(`Are you sure you want to cancel booking ${activeBookingToEdit.bookingId}?`)) return;
 
           try {
             await window.siteApi.cancelBooking(activeBookingToEdit.bookingId);
-            document.getElementById("edit-modal").classList.remove("is-open");
+            closeEdit();
             await loadBookings();
           } catch (err) {
             alert(err.message || "Failed to cancel booking");
           }
         };
 
-        // Tab switcher clicks
-        document.querySelectorAll(".status-tab").forEach((tab) => {
-          tab.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const status = tab.getAttribute("data-status");
-            switchTab(status);
-          });
-        });
-
-        // Refresh Button
+        // Refresh button
         document.getElementById("btn-refresh").onclick = loadBookings;
       }
 
@@ -569,6 +612,9 @@
       
       setupModalListeners();
       loadBookings();
+
+      // logout then booking blank
+      window.addEventListener("authChange", loadBookings);
     });
   </script>
 </body>

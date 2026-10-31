@@ -78,6 +78,10 @@ class ServerApi {
     await this.#mockDelay();
     const { userId, modelId, startDate, endDate, cardLast4 } = bookingData;
 
+    if (!userId) {
+      throw new Error("authentication needed to use endpoint");
+    }
+
     const fleetRes = await this.getFleet();
     const model = fleetRes.data.models.find((m) => m.modelId === modelId);
     if (!model) {
@@ -104,7 +108,7 @@ class ServerApi {
 
     const newBooking = {
       bookingId: "BK-" + Date.now().toString(36).toUpperCase(),
-      userId: userId || "Guest",
+      userId: userId,
       modelId: model.modelId,
       modelName: model.name,
       modelType: model.type,
@@ -132,10 +136,15 @@ class ServerApi {
 
   /**
    * Get all bookings (with status auto-progression simulation)
-   * @param {string} [userId]
+   * @param {string|undefined} userId
    */
   async getBookings(userId) {
     await this.#mockDelay();
+    if (!userId) {
+      //return { status: 403 };
+      throw new Error("authentication needed to use endpoint");
+    }
+
     let bookings = JSON.parse(localStorage.getItem("server.bookings") || "[]");
 
     const now = Date.now();
@@ -164,9 +173,9 @@ class ServerApi {
       localStorage.setItem("server.bookings", JSON.stringify(bookings));
     }
 
-    if (userId) {
-      bookings = bookings.filter((b) => b.userId === userId);
-    }
+      console.log("berr",userId)
+    bookings = bookings.filter((b) => b.userId === userId);
+
 
     return { status: 200, data: bookings };
   }
@@ -445,17 +454,21 @@ class SiteApi {
    * @param {Object} bookingData
    */
   async createBooking(bookingData) {
-    const userId = this.getCurrentUserId() || "Guest";
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.error("neeed login to use createbooking");
+      return;
+    }
     const res = await this.server.createBooking({ ...bookingData, userId });
     return res.data;
   }
 
   /**
-   * Get all bookings (for current user or all if guest)
+   * Get all bookings (for current usert)
    */
   async getBookings() {
     const userId = this.getCurrentUserId();
-    const res = await this.server.getBookings(userId || undefined);
+    const res = await this.server.getBookings(userId);
     return res.data;
   }
 

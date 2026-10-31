@@ -13,69 +13,153 @@
   <header><html-component src="components/header.html"></html-component></header>
 
   <main>
-    <h1>User Login</h1>
+    <div class="content-center" style="padding-block: 60px; max-width: 480px;">
 
-    <!-- Current User ID Display -->
-    <section class="section-box">
-      <h2>Session Status</h2>
-      <p>Current User ID: <strong class="display-user-id">Guest (Not logged in)</strong></p>
-      <div>
-        <button type="button" class="action-logout" style="display: none;">Log Out</button>
-        <a href="index.html" style="margin-left: 8px;">Back to Home</a>
+      <!-- Page Title -->
+      <div style="margin-bottom: 32px; text-align: center;">
+        <h1 class="text-display text-size-large" style="margin-bottom: 8px;">Welcome Back</h1>
+        <p class="text-standard text-size-normal16" style="color: var(--color-surface-inverse-lower);">
+          Sign in to manage your bookings and reservations.
+        </p>
       </div>
-    </section>
 
-    <!-- Sign In Form -->
-    <section class="section-box">
-      <h2>Sign In</h2>
-      <form id="login-form">
-        <div>
-          <label for="login-user-id">User ID:</label><br />
-          <input type="text" id="login-user-id" name="userId" placeholder="e.g. user_123" required />
+      <!-- Session status (shown when already logged in) -->
+      <div id="session-status" class="card-box" style="display: none; padding: 16px 20px; margin-bottom: 24px; background-color: var(--color-container);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+          <div>
+            <div style="font-size: 12px; color: var(--color-surface-inverse-lower); margin-bottom: 2px;">Currently signed in as</div>
+            <div class="display-user-id" style="font-weight: 600;"></div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <a href="bookings.html" class="btn-secondary" style="padding-inline: 16px;">My Bookings</a>
+            <button type="button" class="btn-less action-logout">Sign Out</button>
+          </div>
         </div>
-        <br />
-        <div>
-          <label for="login-password">Password (optional):</label><br />
-          <input type="password" id="login-password" name="password" placeholder="Any password" />
-        </div>
-        <br />
-        <button type="submit" id="login-btn">Log In</button>
-      </form>
-    </section>
+      </div>
 
-    <!-- Quick Test Accounts -->
-    <section class="section-box">
-      <h2>Quick Test Accounts</h2>
-      <p>Click any test account below to log in instantly:</p>
-      <button type="button" class="quick-login-btn" data-user-id="user_123">Login as Bob Jones (user_123)</button>
-      <button type="button" class="quick-login-btn" data-user-id="user_456" style="margin-left: 8px;">Login as Alice Smith (user_456)</button>
-    </section>
+      <!-- Sign In Card -->
+      <div class="card-box" style="padding: 32px;">
+        <form id="login-form" style="display: flex; flex-direction: column; gap: 20px;">
+
+          <!-- User ID field -->
+          <div>
+            <label for="login-user-id" style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">User ID</label>
+            <input
+              type="text"
+              id="login-user-id"
+              name="userId"
+              placeholder="e.g. user_123"
+              required
+              autocomplete="username"
+              style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--color-outline); background-color: var(--color-surface-canvas); color: inherit; font-family: inherit; font-size: 15px;"
+            />
+          </div>
+
+          <!-- Password field -->
+          <div>
+            <label for="login-password" style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Password</label>
+            <input
+              type="password"
+              id="login-password"
+              name="password"
+              placeholder="Password (any value in demo mode)"
+              autocomplete="current-password"
+              style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--color-outline); background-color: var(--color-surface-canvas); color: inherit; font-family: inherit; font-size: 15px;"
+            />
+          </div>
+
+          <!-- Quick test account dropdown -->
+          <div>
+            <label for="quick-accounts" style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">
+              Quick Test Accounts
+              <span style="font-weight: 400; color: var(--color-surface-inverse-lower);">— select to auto-fill</span>
+            </label>
+            <select
+              id="quick-accounts"
+              style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--color-outline); background-color: var(--color-surface-canvas); color: inherit; font-family: inherit; font-size: 15px; cursor: pointer;"
+            >
+              <option value="">-- Choose a test account --</option>
+              <option value="user_123">Bob Jones (user_123)</option>
+              <option value="user_456">Alice Smith (user_456)</option>
+            </select>
+          </div>
+
+          <!-- Error message -->
+          <p id="login-error" style="font-size: 13px; color: #dc2626; display: none; margin: 0;">
+            ⚠ User not found. Please check your User ID and try again.
+          </p>
+
+          <!-- Submit -->
+          <button type="submit" id="login-btn" class="btn-secondary" style="width: 100%; padding-block: 12px; font-size: 15px;">
+            Sign In
+          </button>
+
+        </form>
+
+        <div style="border-top: 1px solid var(--color-outline); margin-top: 24px; padding-top: 20px; text-align: center;">
+          <p class="text-standard text-size-normal14" style="color: var(--color-surface-inverse-lower);">
+            Don't have an account? <a href="javascript:alert(`registration disabled in demo`)" style="color: var(--color-primary); font-weight: 600;">Create one now!</a>
+          </p>
+        </div>
+      </div>
+
+    </div>
   </main>
 
-  <!-- Footer -->
   <footer>
-    <p>&copy; 2025 AZoom Car Rental | <a href="index.html">Home</a></p>
+    <html-component src="components/footer.html"></html-component>
   </footer>
 
   <script type="module">
     document.addEventListener("DOMAndLibsLoaded", () => {
       const loginForm = document.getElementById("login-form");
-      const loginInput = document.getElementById("login-user-id");
+      const userIdInput = document.getElementById("login-user-id");
+      const quickSelect = document.getElementById("quick-accounts");
+      const loginError = document.getElementById("login-error");
+      const sessionBox = document.getElementById("session-status");
 
-      // Form submit: save session and redirect to home
+      // Reflect current session state
+      function refreshSessionUI() {
+        const userId = window.siteApi.getCurrentUserId();
+        if (userId) {
+          document.querySelector(".display-user-id").textContent = userId;
+          sessionBox.style.display = "block";
+        } else {
+          sessionBox.style.display = "none";
+        }
+      }
+      refreshSessionUI();
+      window.addEventListener("authChange", refreshSessionUI);
+
+      // Quick account dropdown: auto-fill User ID field
+      quickSelect.addEventListener("change", () => {
+        console.log("autofill demo")
+        const val = quickSelect.value;
+        if (val) {
+          userIdInput.value = val;
+          loginError.style.display = "none";
+        }
+      });
+
+      // Form submit
       loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const userId = loginInput.value.trim();
+        const userId = userIdInput.value.trim();
         if (!userId) return;
+
+        const btn = document.getElementById("login-btn");
+        btn.disabled = true;
+        btn.textContent = "Signing in...";
+        loginError.style.display = "none";
 
         try {
           await window.siteApi.authenticate(userId);
-        } catch (e) {
-          console.error(`fail auth as user id ${userId}`);
-          //tbc status text update
-          return;
+          window.location.href = "book.html"; // comment to test auth evt trigger
+        } catch {
+          loginError.style.display = "block";
+          btn.disabled = false;
+          btn.textContent = "Sign In";
         }
-        window.location.href = "index.html";
       });
 
       // Quick test buttons: save session and redirect to home
@@ -85,6 +169,13 @@
           window.siteApi.authenticate(userId);
           //window.location.href = "index.html"; // comment to test auth evt trigger
         });
+      });
+      // Logout button
+      document.querySelector(".action-logout").addEventListener("click", () => {
+        window.siteApi.logout();
+        refreshSessionUI();
+        userIdInput.value = "";
+        quickSelect.value = "";
       });
     });
   </script>
