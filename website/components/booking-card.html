@@ -1,0 +1,50 @@
+<div class="card-box" style="display: flex; flex-direction: column; gap: 12px;">
+  <!-- Header Row: Model, Ref, Status, Actions -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <div style="width: 72px; height: 48px; border-radius: 6px; background-color: var(--color-container); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+        <img src="${props.imgPath}" alt="${props.modelName}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none';" />
+      </div>
+      <div>
+        <h3 class="text-display text-size-normal18" style="margin-bottom: 2px;">${props.modelName}</h3>
+        <div style="font-size: 13px; color: var(--color-surface-inverse-lower);">
+          Ref: <strong>${props.bookingId}</strong> &bull; Assigned Plate: <strong class="badge badge-neutral" style="font-size: 12px;">${props.carPlate}</strong>
+        </div>
+      </div>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 8px;">
+      ${props.statusBadgeHtml}
+      ${(props.status === 'upcoming' || props.status === 'ongoing') ? `
+        <button type="button" class="btn-icon action-edit-booking" data-id="${props.bookingId}" title="Edit or Manage Booking" aria-label="Edit booking">
+          <span class="icon-wrap" style="width: 18px; height: 18px;"><html-component src="icons/icon-pencil.html"></html-component></span>
+        </button>
+      ` : ''}
+    </div>
+  </div>
+
+  <!-- Rental Details Line -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; background-color: var(--color-container); padding: 12px 16px; border-radius: 8px; margin-top: 4px;">
+    <div>
+      <span style="font-size: 12px; color: var(--color-surface-inverse-lower); display: block;">Period</span>
+      <strong style="font-size: 14px;">${props.startDate} &rarr; ${props.endDate}</strong>
+    </div>
+    <div>
+      <span style="font-size: 12px; color: var(--color-surface-inverse-lower); display: block;">Duration</span>
+      <strong style="font-size: 14px;">${props.rentalDays} day${props.rentalDays > 1 ? "s" : ""}</strong>
+    </div>
+    <div>
+      <span style="font-size: 12px; color: var(--color-surface-inverse-lower); display: block;">Rate</span>
+      <strong style="font-size: 14px;">$${props.dailyRateSGD} / day</strong>
+    </div>
+    <div>
+      <span style="font-size: 12px; color: var(--color-surface-inverse-lower); display: block;">Total Amount</span>
+      <strong style="font-size: 15px; color: var(--color-primary);">$${props.totalAmount} SGD</strong>
+    </div>
+  </div>
+
+  <!-- Interactive Actions Section -->
+  <!-- ${props.actionSectionHtml} -->
+  <slot></slot>
+</div>
+

@@ -6,7 +6,7 @@ const NAV_ITEMS = [
   { name: "My Bookings", href: "bookings.html" },
   { name: "How It Works", href: "index.html#why-azoom" },
   { name: "FAQ", href: "#" },
-  { name: "Contact Us", href: "#" },
+  // { name: "Contact Us", href: "#" },
 ];
 
 function renderNavItems() {

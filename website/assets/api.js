@@ -195,6 +195,73 @@ class ServerApi {
   }
 
   /**
+   * Update an existing booking (dates, payment card)
+   * @param {string} bookingId
+   * @param {Object} updates
+   */
+  async updateBooking(bookingId, updates) {
+    await this.#mockDelay();
+    const bookings = JSON.parse(localStorage.getItem("server.bookings") || "[]");
+    const booking = bookings.find((b) => b.bookingId === bookingId);
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+
+    if (booking.status === "completed" || booking.status === "cancelled") {
+      throw new Error(`Cannot modify booking in ${booking.status} status`);
+    }
+
+    if (updates.startDate && updates.endDate) {
+      booking.startDate = updates.startDate;
+      booking.endDate = updates.endDate;
+      const start = new Date(updates.startDate);
+      const end = new Date(updates.endDate);
+      const diffTime = Math.max(1, end.getTime() - start.getTime());
+      const rentalDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      booking.rentalDays = rentalDays;
+      booking.totalAmount = rentalDays * booking.dailyRateSGD;
+
+      const now = new Date();
+      const todayStr = now.toISOString().split("T")[0];
+      if (booking.status === "upcoming" && updates.startDate <= todayStr && updates.endDate >= todayStr) {
+        booking.status = "ongoing";
+      }
+    }
+
+    if (updates.cardLast4) {
+      booking.cardLast4 = updates.cardLast4;
+    }
+
+    booking.updatedAt = new Date().toISOString();
+    localStorage.setItem("server.bookings", JSON.stringify(bookings));
+
+    return { status: 200, data: booking };
+  }
+
+  /**
+   * Cancel an existing booking
+   * @param {string} bookingId
+   */
+  async cancelBooking(bookingId) {
+    await this.#mockDelay();
+    const bookings = JSON.parse(localStorage.getItem("server.bookings") || "[]");
+    const booking = bookings.find((b) => b.bookingId === bookingId);
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+
+    if (booking.status === "completed") {
+      throw new Error("Cannot cancel a completed booking");
+    }
+
+    booking.status = "cancelled";
+    booking.cancelledAt = new Date().toISOString();
+    localStorage.setItem("server.bookings", JSON.stringify(bookings));
+
+    return { status: 200, data: booking };
+  }
+
+  /**
    *
    * @param {string} userId
    * @returns {Promise<{status:number, data: UserProfile}>}
@@ -393,6 +460,25 @@ class SiteApi {
    */
   async payBooking(bookingId) {
     const res = await this.server.payBooking(bookingId);
+    return res.data;
+  }
+
+  /**
+   * Update booking details (dates, etc)
+   * @param {string} bookingId
+   * @param {Object} updates
+   */
+  async updateBooking(bookingId, updates) {
+    const res = await this.server.updateBooking(bookingId, updates);
+    return res.data;
+  }
+
+  /**
+   * Cancel booking
+   * @param {string} bookingId
+   */
+  async cancelBooking(bookingId) {
+    const res = await this.server.cancelBooking(bookingId);
     return res.data;
   }
 

@@ -21,20 +21,7 @@
             class="btn-less"
             style="display: inline-flex; align-items: center; gap: 8px"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              style="width: 18px; height: 18px"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-              />
-            </svg>
+            <span class="icon-wrap" style="width: 18px; height: 18px;"><html-component src="components/icons/icon-arrow-left.html"></html-component></span>
             Back to Fleet Catalog
           </a>
         </div>
@@ -91,8 +78,7 @@
                 <div>
                   <h3
                     id="car-banner-name"
-                    class="text-display"
-                    style="font-size: 18px; font-weight: 600"
+                    class="text-display text-size-normal18"
                   >
                     Loading model...
                   </h3>
@@ -213,20 +199,7 @@
                     border-style: dashed;
                   "
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    style="width: 18px; height: 18px"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M12 4.5v15m7.5-7.5h-15"
-                    />
-                  </svg>
+                  <span class="icon-wrap" style="width: 18px; height: 18px;"><html-component src="components/icons/icon-plus.html"></html-component></span>
                   Add New Card
                 </button>
               </div>
@@ -247,8 +220,8 @@
           <div>
             <div class="card-box" style="position: sticky; top: 90px">
               <h3
-                class="text-display"
-                style="font-size: 20px; font-weight: 600; margin-bottom: 16px"
+                class="text-display text-size-medium20"
+                style="margin-bottom: 16px"
               >
                 Booking Summary
               </h3>
@@ -323,16 +296,7 @@
                 margin-bottom: 16px;
               "
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                style="width: 32px; height: 32px"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-              </svg>
+              <span class="icon-wrap" style="width: 32px; height: 32px;"><html-component src="components/icons/icon-check.html"></html-component></span>
             </div>
             <h4 style="font-size: 18px; margin-bottom: 6px">Your Vehicle Is Ready</h4>
             <p
@@ -372,11 +336,8 @@
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="home-footer">
-      <div class="footer-bottom-bar text-size-normal13">
-        <p>&copy; 2026 AZoom Car Rental. All rights reserved.</p>
-      </div>
+    <footer>
+      <html-component src="components/footer.html"></html-component>
     </footer>
 
     <style>

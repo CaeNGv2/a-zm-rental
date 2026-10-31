@@ -48,30 +48,35 @@ class HtmlComponent extends HTMLElement {
   async connectedCallback() {
     const src = this.getSrcAttr();
 
-    const parentContext = (() => {
-      let contextSrc = window.location.href;
-      /** @type {HtmlComponent|null|undefined} */
-      const parent = this.parentElement?.closest(HtmlComponent.htmlTagName);
-      if (parent) {
-        const parentContext = parent.getAttribute("context");
-        if (parentContext) {
-          contextSrc = (new URL(parentContext, window.location.href)).href;
-        } else {
-          console.error("missing src on parent html-component");
+    if (this.dataset["state"] === "injected") {
+      console.log(`component already injected (was it connected before?), skipping injection ${src}`);
+    } else {
+      const parentContext = (() => {
+        let contextSrc = window.location.href;
+        /** @type {HtmlComponent|null|undefined} */
+        const parent = this.parentElement?.closest(HtmlComponent.htmlTagName);
+        if (parent) {
+          const parentContext = parent.getAttribute("context");
+          if (parentContext) {
+            contextSrc = new URL(parentContext, window.location.href).href;
+          } else {
+            console.error("missing src on parent html-component");
+          }
         }
-      }
-      return (new URL(".", contextSrc)).href; 
-    })();
+        return new URL(".", contextSrc).href;
+      })();
 
-    const resolvedSrc = (new URL(src, parentContext)).href;
+      const resolvedSrc = new URL(src, parentContext).href;
 
-    console.log(`resolved context for html-component ${src}: ${parentContext}`); // dbg
+      console.log(`resolved context for html-component ${src}: ${parentContext}`); // dbg
 
-    const newContextUrl = new URL(".", resolvedSrc);
+      const newContextUrl = new URL(".", resolvedSrc);
 
-    this.setAttribute("context", newContextUrl.pathname);
-    await this.injectComponentBody(resolvedSrc);
-    await this.injectScripts(newContextUrl.href);
+      this.setAttribute("context", newContextUrl.pathname);
+      await this.injectComponentBody(resolvedSrc);
+      await this.injectScripts(newContextUrl.href);
+      this.dataset["state"] = "injected";
+    }
 
     // trigger a finish load event so other logic can work on the injected component
     this.dispatchEvent(new CustomEvent("loaded", {

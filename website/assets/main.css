@@ -15,7 +15,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Grotesk:wght@300..700&display=swap");
 
 /**
- * DESIGN TOKENS, BRANDING AND THEMING
+ * DESIGN TOKENS, BRANDING AND THEMING.
+ * Generated from penpot by design-tokens convert script.
  */
 
 :root, [data-theme="light"] {
@@ -40,7 +41,7 @@
   --color-surface-inverse: var(--color-text-light);
   --color-surface-inverse-lower: #d9dee3;
   --color-container-highest: #37434f;
-  --color-secondary: #1ca1b0;
+  --color-secondary: #53dfee;
   --color-outline: #8e8e8e;
   --color-surface: #2d3842;
   --color-text-inverse: var(--color-text-dark);
@@ -90,8 +91,7 @@ body {
   outline-offset: 2px;
 }
 
-h1,
-h2 {
+h1, h2, h3, h4 {
   /* reset weight */
   font-weight: 400;
   /* see: text-display */
@@ -107,7 +107,12 @@ main {
 .content-center {
   max-width: 1200px;
   margin: auto;
-  padding: 0 16px;
+  padding: 0 32px;
+}
+@media (max-width: 640px) {
+  .content-center {
+    padding: 0 16px;
+  }
 }
 
 /* generic weights */
@@ -123,6 +128,8 @@ main {
 
 /* typography: display */
 .text-display,
+.text-display.text-size-medium,
+.text-display.text-size-medium24,
 h2 {
   font-family: "Space Grotesk", sans-serif;
   font-optical-sizing: auto;
@@ -132,6 +139,10 @@ h2 {
 .text-display.text-size-large,
 h1 {
   font-size: 44px;
+}
+.text-display.text-size-medium20,
+h1 {
+  font-size: 20px;
 }
 
 /* optimise text-display size for mobile */
@@ -205,14 +216,22 @@ body {
   cursor: pointer;
   transition: background-color 150ms ease;
 }
+button.btn-raw,
+button.btn-primary,
+button.btn-secondary,
+button.btn-less {
+  /** buttin ele resets */
+  /*background: none;*/ /* set it in every btn instead or this overrides */
+  border: none;
+  font: inherit;
+}
+
 .btn-raw:hover, .btn-less:hover {
   background-color: var(--color-container-highest);
 }
 .btn-raw, .btn-less {
-  color: inherit;
-}
-.btn-raw {
   background: transparent;
+  color: inherit;
 }
 .btn-less {
   outline: 1px solid var(--color-outline);
@@ -319,39 +338,44 @@ body {
 }
 
 .badge-success {
-  background-color: rgba(105, 148, 70, 0.15);
-  color: var(--color-primary);
+  background-color: rgba(105, 148, 70, 0.5);
   border: 1px solid rgba(105, 148, 70, 0.3);
 }
 
 .badge-danger {
-  background-color: rgba(220, 38, 38, 0.12);
-  color: #dc2626;
-  border: 1px solid rgba(220, 38, 38, 0.25);
+  background-color: rgba(220, 38, 38, 0.5);
+  /* color: #dc2626; */
+  border: 1px solid rgba(220, 38, 38, 0.3);
 }
 
 .badge-info {
-  background-color: rgba(18, 65, 91, 0.12);
-  color: var(--color-secondary);
-  border: 1px solid rgba(18, 65, 91, 0.25);
+  background-color: rgba(18, 65, 91, 0.5);
+  border: 1px solid rgba(18, 65, 91, 0.3);
 }
 
 .badge-warning {
-  background-color: rgba(217, 119, 6, 0.15);
-  color: #d97706;
+  background-color: rgba(217, 119, 6, 0.5);
+  /* color: #d97706; */
   border: 1px solid rgba(217, 119, 6, 0.3);
 }
 
 .badge-purple {
-  background-color: rgba(147, 51, 234, 0.12);
-  color: #9333ea;
-  border: 1px solid rgba(147, 51, 234, 0.25);
+  background-color: rgba(147, 51, 234, 0.5);
+  /* color: #9333ea; */
+  border: 1px solid rgba(147, 51, 234, 0.3);
 }
 
 .badge-neutral {
   background-color: var(--color-container);
-  color: var(--color-surface-inverse-lower);
+  /* color: var(--color-surface-inverse-lower); */
   border: 1px solid var(--color-outline);
+}
+
+.badge-muted {
+  background-color: var(--color-container);
+  /* color: var(--color-surface-inverse-lower); */
+  border: 1px solid var(--color-outline);
+  text-decoration: line-through;
 }
 
 /* Card Container */
@@ -447,3 +471,16 @@ body {
   font-size: 18px;
   font-weight: 700;
 }
+
+/* Heroicon wrapper helpers */
+.icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-wrap svg { /* nested svg to stretch to wrapper */
+  width: 100%;
+  height: 100%;
+}
+
+

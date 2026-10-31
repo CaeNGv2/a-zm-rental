@@ -52,6 +52,10 @@ class State {
     }
   }
 
+  getValueUntracked() {
+    return this.#value;
+  }
+
   /**
    * @template T2
    * @param {T2} initialValue 

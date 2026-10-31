@@ -1,0 +1,51 @@
+<div class="card-box card-box-hover" style="display: flex; flex-direction: column; justify-content: space-between;">
+  <div>
+    <!-- Car Image Showcase -->
+    <div style="width: 100%; aspect-ratio: 16 / 10; border-radius: 8px; overflow: hidden; background-color: var(--color-container); margin-bottom: 16px; display: flex; align-items: center; justify-content: center; position: relative;">
+      <img src="${props.imgPath}" alt="${props.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+      <div style="display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; color: var(--color-surface-inverse-lower);">
+        <span class="icon-wrap" style="width: 48px; height: 48px; color: var(--color-primary);"><html-component src="icons/icon-truck.html"></html-component></span>
+        <span style="font-size: 13px; font-weight: 500; margin-top: 4px;">${props.name}</span>
+      </div>
+      <div style="position: absolute; top: 12px; right: 12px;">
+        ${props.isAvail
+          ? `<span class="badge badge-success">✓ ${props.availQty} Available</span>`
+          : `<span class="badge badge-danger">✕ Fully Booked</span>`}
+      </div>
+    </div>
+
+    <!-- Info Header -->
+    <div style="margin-bottom: 12px;">
+      <h3 class="text-display text-size-medium20" style="margin-bottom: 4px;">${props.name}</h3>
+      <p class="text-standard text-size-normal14" style="color: var(--color-surface-inverse-lower);">${props.type}</p>
+    </div>
+
+    <!-- Specs Pill Row -->
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+      <span class="badge badge-neutral" style="font-weight: 500;">
+        <span class="icon-wrap" style="width: 15px; height: 15px; display: inline-flex;"><html-component src="icons/icon-users.html"></html-component></span>
+        ${props.type.split(" ")[0]} Seater
+      </span>
+      <span class="badge badge-neutral" style="font-weight: 500;">
+        <span class="icon-wrap" style="width: 15px; height: 15px; display: inline-flex;"><html-component src="icons/icon-cog.html"></html-component></span>
+        ${props.gearTypeDesc}
+      </span>
+      <span class="badge badge-neutral" style="font-weight: 500;">
+        Total Units: ${props.totalQty}
+      </span>
+    </div>
+  </div>
+
+  <!-- Price & Book Button Footer -->
+  <div style="border-top: 1px solid var(--color-outline); padding-top: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <div>
+      <span style="font-size: 13px; color: var(--color-surface-inverse-lower); display: block;">Daily Rate</span>
+      <span class="text-display font-weight-bold" style="font-size: 22px; color: var(--color-primary);">$${props.dailyRateSGD}</span>
+      <span style="font-size: 13px; color: var(--color-surface-inverse-lower);"> / day</span>
+    </div>
+    ${props.isAvail
+      ? `<a href="reservation.html?modelId=${encodeURIComponent(props.modelId)}" class="btn-primary" style="flex: 1; padding-block: 10px;">Book Now</a>`
+      : `<button type="button" class="btn-raw" style="flex: 1; padding-block: 10px; background-color: var(--color-container); color: var(--color-surface-inverse-lower); cursor: not-allowed;" disabled>Unavailable</button>`}
+  </div>
+</div>
+
